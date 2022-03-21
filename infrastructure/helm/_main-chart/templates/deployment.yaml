@@ -1,0 +1,74 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "main-chart.fullname" . }}
+  labels:
+    {{- include "main-chart.labels" . | nindent 4 }}
+spec:
+  {{ $autoScaling := .Values.autoscaling | default dict}}
+  {{- if not $autoScaling.enabled }}
+  replicas: {{ .Values.replicaCount }}
+  {{- end }}
+  selector:
+    matchLabels:
+      {{- include "main-chart.selectorLabels" . | nindent 6 }}
+  template:
+    metadata:
+      {{- with .Values.podAnnotations }}
+      annotations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      labels:
+        {{- include "main-chart.selectorLabels" . | nindent 8 }}
+    spec:
+      {{- if .Values.image.secret }}
+      imagePullSecrets:
+        - name: {{ .Values.image.secret }}
+      {{- end }}
+      containers:
+        - name: {{ include "main-chart.fullname" . }}
+          {{- if .Values.image.repository }}
+          image: "{{ .Values.image.repository }}/{{ .Values.image.name }}:{{ .Values.image.customTag | default .Chart.AppVersion }}"
+          {{- else }}
+          image: "{{ .Values.image.name }}:{{ .Values.image.customTag | default .Chart.AppVersion }}"
+          {{- end}}
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          {{- if .Values.image.command }}
+          command: {{ toJson .Values.image.command}}
+          args: {{ toJson .Values.image.args }}
+          {{- else }}
+          command: ["./app/server"]
+          args: ["-c", "/app/config.yaml"]
+          {{- end }}
+          ports:
+          {{- range $key, $val := .Values.service.ports }}
+          - containerPort: {{ $val.targetPort }}
+          {{- end }}
+          {{- with .Values.env }}
+          env:
+          {{- toYaml . |  nindent 12 }}        
+          {{- end }}
+          {{- if .Values.resources }}
+          resources:
+            {{- toYaml .Values.resources | nindent 12 }}
+          {{- else }}
+          resources: 
+            limits:
+              cpu: 50m
+              memory: 50Mi
+            requests:
+              cpu: 50m
+              memory: 50Mi
+          {{- end }}
+      {{- with .Values.nodeSelector }}
+      nodeSelector:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.affinity }}
+      affinity:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.tolerations }}
+      tolerations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}

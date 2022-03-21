@@ -1,0 +1,319 @@
+{
+  "swagger": "2.0",
+  "info": {
+    "title": "stark/api/ultron.proto",
+    "version": "version not set"
+  },
+  "tags": [
+    {
+      "name": "Ultron"
+    }
+  ],
+  "consumes": [
+    "application/json"
+  ],
+  "produces": [
+    "application/json"
+  ],
+  "paths": {},
+  "definitions": {
+    "googlerpcStatus": {
+      "type": "object",
+      "properties": {
+        "code": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "message": {
+          "type": "string"
+        },
+        "details": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/protobufAny"
+          }
+        }
+      }
+    },
+    "protobufAny": {
+      "type": "object",
+      "properties": {
+        "typeUrl": {
+          "type": "string"
+        },
+        "value": {
+          "type": "string",
+          "format": "byte"
+        }
+      }
+    },
+    "ultronApproveCryptoTopUpReply": {
+      "type": "object"
+    },
+    "ultronApproveCryptoWithdrawReply": {
+      "type": "object"
+    },
+    "ultronCallbackTransactionReply": {
+      "type": "object"
+    },
+    "ultronCancelCryptoTopUpReply": {
+      "type": "object"
+    },
+    "ultronCancelCryptoWithdrawReply": {
+      "type": "object"
+    },
+    "ultronCreateCryptoWithdrawReply": {
+      "type": "object",
+      "properties": {
+        "paymentId": {
+          "type": "string",
+          "format": "int64"
+        }
+      }
+    },
+    "ultronCryptoHotWalletStatus": {
+      "type": "string",
+      "enum": [
+        "CRYPTO_HOT_WALLET_STATUS_UNSPECIFIED",
+        "CRYPTO_HOT_WALLET_STATUS_ACTIVE",
+        "CRYPTO_HOT_WALLET_STATUS_IN_ACTIVE"
+      ],
+      "default": "CRYPTO_HOT_WALLET_STATUS_UNSPECIFIED"
+    },
+    "ultronCryptoNetworkType": {
+      "type": "string",
+      "enum": [
+        "CRYPTO_NETWORK_TYPE_UNSPECIFIED",
+        "ERC20",
+        "BEP20",
+        "TRC20"
+      ],
+      "default": "CRYPTO_NETWORK_TYPE_UNSPECIFIED"
+    },
+    "ultronCryptoType": {
+      "type": "string",
+      "enum": [
+        "CRYPTO_TYPE_UNSPECIFIED",
+        "USDT"
+      ],
+      "default": "CRYPTO_TYPE_UNSPECIFIED"
+    },
+    "ultronCryptoWallet": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "format": "int64"
+        },
+        "address": {
+          "type": "string"
+        },
+        "merchantId": {
+          "type": "string",
+          "format": "int64"
+        },
+        "cryptoType": {
+          "$ref": "#/definitions/ultronCryptoType"
+        },
+        "cryptoNetworkType": {
+          "$ref": "#/definitions/ultronCryptoNetworkType"
+        },
+        "status": {
+          "$ref": "#/definitions/ultronCryptoWalletStatus"
+        }
+      }
+    },
+    "ultronCryptoWalletName": {
+      "type": "string",
+      "enum": [
+        "CRYPTO_WALLET_NAME_UNSPECIFIED",
+        "UMO"
+      ],
+      "default": "CRYPTO_WALLET_NAME_UNSPECIFIED"
+    },
+    "ultronCryptoWalletStatus": {
+      "type": "string",
+      "enum": [
+        "CRYPTO_NETWORK_STATUS_UNSPECIFIED",
+        "AVAILABLE",
+        "USED",
+        "BANNED"
+      ],
+      "default": "CRYPTO_NETWORK_STATUS_UNSPECIFIED"
+    },
+    "ultronGetCryptoSettingsReply": {
+      "type": "object",
+      "properties": {
+        "autoTransferWithdrawCrypto": {
+          "type": "boolean"
+        }
+      }
+    },
+    "ultronGetCryptoWalletReply": {
+      "type": "object",
+      "properties": {
+        "address": {
+          "type": "string"
+        }
+      }
+    },
+    "ultronGetSystemCryptoHotWalletsReply": {
+      "type": "object",
+      "properties": {
+        "records": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/ultronSystemCryptoHotWallet"
+          }
+        }
+      }
+    },
+    "ultronImportCryptoHotWalletsReply": {
+      "type": "object",
+      "properties": {
+        "records": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/ultronSystemCryptoHotWallet"
+          }
+        }
+      }
+    },
+    "ultronImportCryptoWalletsReply": {
+      "type": "object",
+      "properties": {
+        "wallets": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/ultronCryptoWallet"
+          }
+        }
+      }
+    },
+    "ultronListCryptoHotWalletsReply": {
+      "type": "object",
+      "properties": {
+        "records": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/ultronSystemCryptoHotWallet"
+          }
+        },
+        "total": {
+          "type": "string",
+          "format": "uint64"
+        },
+        "currentPage": {
+          "type": "integer",
+          "format": "int64"
+        }
+      }
+    },
+    "ultronListCryptoWalletsReply": {
+      "type": "object",
+      "properties": {
+        "records": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/ultronCryptoWallet"
+          }
+        },
+        "total": {
+          "type": "string",
+          "format": "uint64"
+        },
+        "currentPage": {
+          "type": "integer",
+          "format": "int64"
+        }
+      }
+    },
+    "ultronLoadCryptoWalletsReply": {
+      "type": "object",
+      "properties": {
+        "data": {
+          "type": "string"
+        }
+      }
+    },
+    "ultronRejectCryptoTopUpReply": {
+      "type": "object"
+    },
+    "ultronRejectCryptoWithdrawReply": {
+      "type": "object"
+    },
+    "ultronSubmitCryptoWithdrawReply": {
+      "type": "object"
+    },
+    "ultronSystemCryptoHotWallet": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "format": "int64"
+        },
+        "address": {
+          "type": "string"
+        },
+        "merchantId": {
+          "type": "string",
+          "format": "int64"
+        },
+        "cryptoType": {
+          "$ref": "#/definitions/ultronCryptoType"
+        },
+        "cryptoNetworkType": {
+          "$ref": "#/definitions/ultronCryptoNetworkType"
+        },
+        "totalBalance": {
+          "type": "number",
+          "format": "double"
+        },
+        "balance": {
+          "type": "number",
+          "format": "double"
+        },
+        "status": {
+          "$ref": "#/definitions/ultronCryptoHotWalletStatus"
+        }
+      }
+    },
+    "ultronUpdateAutoTransferCryptoWithdrawReply": {
+      "type": "object"
+    },
+    "ultronValidateCryptoHotWalletsReply": {
+      "type": "object",
+      "properties": {
+        "validRecords": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/ultronSystemCryptoHotWallet"
+          }
+        },
+        "duplicatedRecords": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/ultronSystemCryptoHotWallet"
+          }
+        }
+      }
+    },
+    "ultronValidateCryptoWalletsReply": {
+      "type": "object",
+      "properties": {
+        "validRecords": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/ultronCryptoWallet"
+          }
+        },
+        "duplicatedRecords": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/ultronCryptoWallet"
+          }
+        }
+      }
+    }
+  }
+}

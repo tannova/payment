@@ -1,0 +1,20 @@
+listener:
+  tcp:
+    address: 0.0.0.0
+    port: 8080
+    secure: false
+
+logger:
+  pretty: false
+  level: DEBUG
+
+s3:
+  access_key_id: ${S3_ACCESS_KEY_ID}
+  secret_access_key: ${S3_SECRET_ACCESS_KEY}
+  region: ${S3_REGION}
+  bucket: ${FALCON_S3_BUCKET}
+  host: ${FALCON_S3_HOST}
+
+setting:
+  service_names_allowed:
+    - loki

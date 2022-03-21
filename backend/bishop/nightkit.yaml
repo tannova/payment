@@ -1,0 +1,27 @@
+project:
+  name: bishop
+
+gen:
+  profiling:
+    port: 6060
+    enable: false
+  dockerfile:
+    enable: false
+  ent:
+    enable: false
+  client:
+    enable: false
+  helm:
+    enable: false
+  proto:
+    go:
+      - bishop.proto
+      - config_bishop.proto
+    js:
+      - bishop.proto
+    py:
+      - bishop.proto
+  openMetrics:
+    enable: false
+    port: 5555
+    path: /metrics

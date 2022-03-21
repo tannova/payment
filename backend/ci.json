@@ -1,0 +1,28 @@
+{
+  "owners": [""],
+  "notify_channels": {
+    "test": {
+      "on_failed": "C031V1YJKT4",
+      "on_success": "C031V1YJKT4",
+      "additional_receivers": []
+    },
+    "build-proto": {
+      "channel": "C031V1YJKT4",
+      "additional_receivers": [
+        "user:U01PNCDD803"
+      ]
+    },
+    "build": {
+      "channel": "C031V1YJKT4",
+      "additional_receivers": []
+    },
+    "deploy": {
+      "channel": "C031V1YJKT4",
+      "additional_receivers": []
+    }
+  },
+  "deploy": true,
+  "integration_test": false,
+  "build_proto": true,
+  "build_image": true
+}

@@ -1,0 +1,30 @@
+replicaCount: 1
+namespace: default
+image:
+  secret: alopay
+  repository: registry.gitlab.com
+  pullPolicy: Always
+  name: mcuc/monorepo/heimdall
+  tag: prod
+  command: ["/app/scripts/docker-entrypoint.sh"]
+env:
+  - name: DOGSTATSD_HOST_IP
+    valueFrom:
+      fieldRef:
+        fieldPath: status.hostIP
+resources: 
+  limits:
+    cpu: 50m
+    memory: 50Mi
+  requests:
+    cpu: 50m
+    memory: 50Mi
+service:
+  type: NodePort
+  ports:
+    - port: 8080
+      targetPort: 8080
+targetGroupBinding:
+  enabled: true
+  targetPort: 8080
+  targetGroupArn:

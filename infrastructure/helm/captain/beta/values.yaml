@@ -1,0 +1,30 @@
+replicaCount: 1
+namespace: default
+vaultsecret:
+  enabled: true
+  secretName: captain
+  path: kv/apps/captain
+image:
+  secret: alopay
+  repository: registry.gitlab.com
+  pullPolicy: Always
+  name: mcuc/monorepo/captain
+  tag: beta
+resources: {}
+env:
+  - name: CAPTAIN_DATABASE_URL
+    valueFrom:
+      secretKeyRef:
+        name: captain
+        key: database_url
+  - name: CAPTAIN_REDIS_ADDRESS
+    valueFrom:
+      secretKeyRef:
+        name: captain
+        key: redis_address
+service:
+  type: ClusterIP
+  ports:
+    - name: "grpc"
+      port: 8080
+      targetPort: 8080

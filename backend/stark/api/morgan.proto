@@ -1,0 +1,138 @@
+syntax = "proto3";
+
+package mcuc.stark.morgan;
+
+option go_package = "gitlab.com/mcuc/monorepo/backend/stark/pkg/api;stark";
+
+import "google/protobuf/timestamp.proto";
+import "validate/validate.proto";
+import "groot/api/groot.proto";
+
+service Morgan {
+  // MEX call to request a payment for their user to make payment to telco
+  rpc CreateTelcoWithdraw (CreateTelcoWithdrawRequest) returns (CreateTelcoWithdrawReply);
+  rpc CreateTelcoTopUp (CreateTelcoTopUpRequest) returns (CreateTelcoTopUpReply);
+  rpc CancelTelcoWithdraw (CancelTelcoWithdrawRequest) returns (CancelTelcoWithdrawReply);
+
+  // When telco provider callback to Bishop, it will call this api to complete a top up telco payment
+  rpc CompleteTelcoTopUp (CompleteTelcoTopUpRequest) returns (CompleteTelcoTopUpReply);
+
+  // Teller manage top-up and withdraw payment
+  rpc ApproveTelcoTopUp (ApproveTelcoTopUpRequest) returns (ApproveTelcoTopUpReply);
+  rpc ApproveTelcoWithdraw (ApproveTelcoWithdrawRequest) returns (ApproveTelcoWithdrawReply);
+  rpc RejectTelcoTopUp (RejectTelcoTopUpRequest) returns (RejectTelcoTopUpReply);
+  rpc RejectTelcoWithdraw (RejectTelcoWithdrawRequest) returns (RejectTelcoWithdrawReply);
+  rpc GetSettings (GetSettingsRequest) returns (GetSettingsReply);
+  rpc UpdateTopUpAutoApprovalSetting (UpdateTopUpAutoApprovalSettingRequest) returns (UpdateTopUpAutoApprovalSettingReply);
+  rpc UpdateUsingThirdPartySetting (UpdateUsingThirdPartySettingRequest) returns (UpdateUsingThirdPartySettingReply);
+  rpc UpdateChargeCardProvidersSetting (UpdateChargeCardProvidersSettingRequest) returns (UpdateChargeCardProvidersSettingReply);
+  rpc UpdateGetCardProvidersSetting (UpdateGetCardProvidersSettingRequest) returns (UpdateGetCardProvidersSettingReply);
+}
+
+message CreateTelcoWithdrawRequest {
+  uint64 amount = 1 [(validate.rules).uint64.gt = 0];
+  mcuc.groot.TelcoName telco_name = 2;
+  int64 merchant_user_id = 3;
+}
+
+message CreateTelcoWithdrawReply {
+  int64 payment_id = 1;
+}
+
+message CreateTelcoTopUpRequest {
+  mcuc.groot.Card card = 1;
+  // Can be deprecated
+  string tx_id = 2;
+  int64 merchant_user_id = 3;
+}
+
+message CreateTelcoTopUpReply {
+  int64 payment_id = 1;
+}
+
+message CancelTelcoWithdrawRequest {
+  int64 payment_id = 1;
+}
+message CancelTelcoWithdrawReply {
+}
+
+message CompleteTelcoTopUpRequest {
+  mcuc.groot.Card card = 1;
+  int64 payment_id = 2;
+  uint64 charged_amount = 3;
+  string provider = 4;
+}
+message CompleteTelcoTopUpReply {}
+
+message ApproveTelcoTopUpRequest {
+  int64 payment_id = 1;
+  string note = 2;
+}
+
+message ApproveTelcoTopUpReply {}
+
+message ApproveTelcoWithdrawRequest {
+  int64 payment_id = 1;
+  string note = 2;
+}
+message ApproveTelcoWithdrawReply {}
+
+message RejectTelcoTopUpRequest {
+  int64 payment_id = 1;
+  string note = 2;
+  bool is_merchant_call = 3;
+}
+
+message RejectTelcoTopUpReply {}
+
+message RejectTelcoWithdrawRequest {
+  int64 payment_id = 1;
+  string note = 2;
+  bool is_merchant_call = 3;
+}
+
+message RejectTelcoWithdrawReply {}
+
+message GetSettingsRequest {}
+message GetSettingsReply {
+  bool top_up_auto_approval = 1;
+  bool enable_third_party = 2;
+  repeated Provider charge_card_providers = 3;
+  repeated Provider get_card_providers = 4;
+}
+
+message UpdateTopUpAutoApprovalSettingRequest {
+  bool top_up_auto_approval = 1;
+}
+message UpdateTopUpAutoApprovalSettingReply {}
+
+message UpdateUsingThirdPartySettingRequest {
+  bool enable_third_party = 1;
+}
+message UpdateUsingThirdPartySettingReply {}
+
+message Provider {
+  string name = 1;
+  bool enable = 2;
+  int64 priority = 3;
+}
+message UpdateChargeCardProvidersSettingRequest {
+  repeated Provider providers = 1;
+}
+message UpdateChargeCardProvidersSettingReply {}
+
+message UpdateGetCardProvidersSettingRequest {
+  repeated Provider providers = 1;
+}
+message UpdateGetCardProvidersSettingReply {}
+
+message TelcoPaymentDetail {
+  int64 id = 1;
+  string serial_number = 2;
+  string card_id = 3;
+  uint64 charged_amount = 4;
+  uint64 amount = 5;
+  mcuc.groot.TelcoName telco_name = 6;
+  google.protobuf.Timestamp created_at = 20;
+  google.protobuf.Timestamp updated_at = 30;
+}

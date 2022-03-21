@@ -1,0 +1,246 @@
+syntax = "proto3";
+
+package mcuc.stark.pepper;
+
+option go_package = "gitlab.com/mcuc/monorepo/backend/stark/pkg/api;stark";
+
+import "google/protobuf/timestamp.proto";
+import "validate/validate.proto";
+
+service Pepper {
+  // MEX call to request a payment for their user to make payment to pepper
+  rpc GetBankPaymentCode (GetBankPaymentCodeRequest) returns (GetBankPaymentCodeReply);
+  rpc CreateBankingWithdraw (CreateBankingWithdrawRequest) returns (CreateBankingWithdrawReply);
+  rpc CancelBankingWithdraw (CancelBankingWithdrawRequest) returns (CancelBankingWithdrawReply);
+
+  // Teller to manage top-up telco payment
+  rpc CreateBankingTopUp (CreateBankingTopUpRequest) returns (CreateBankingTopUpReply);
+  rpc ApproveBankingTopUp (ApproveBankingTopUpRequest) returns (ApproveBankingTopUpReply);
+  rpc RejectBankingTopUp (RejectBankingTopUpRequest) returns (RejectBankingTopUpReply);
+  rpc ListSystemBankAccountByPaymentInfo (ListSystemBankAccountByPaymentInfoRequest) returns (ListSystemBankAccountByPaymentInfoReply);
+
+  // Teller to manage withdraw telco payment
+  rpc ApproveBankingWithdraw (ApproveBankingWithdrawRequest) returns (ApproveBankingWithdrawReply);
+  rpc RejectBankingWithdraw (RejectBankingWithdrawRequest) returns (RejectBankingWithdrawReply);
+  rpc SubmitBankingWithdraw (SubmitBankingWithdrawRequest) returns (SubmitBankingWithdrawReply);
+  rpc GetIsMerchantUserBankAccountVerified (GetIsMerchantUserBankAccountVerifiedRequest) returns (GetIsMerchantUserBankAccountVerifiedReply);
+
+  // Teller to manage system bank accounts
+  rpc ListSystemBankAccounts (ListSystemBankAccountsRequest) returns (ListSystemBankAccountsReply);
+  rpc CreateSystemBankAccount (CreateSystemBankAccountRequest) returns (CreateSystemBankAccountReply);
+  rpc VerifyMerchantUserBankAccount (VerifyMerchantUserBankAccountRequest) returns (VerifyMerchantUserBankAccountReply);
+  rpc ValidateImportSystemBankAccount (ValidateImportSystemBankAccountRequest) returns (ValidateImportSystemBankAccountReply);
+  rpc ImportSystemBankAccount (ImportSystemBankAccountRequest) returns (ImportSystemBankAccountReply);
+  rpc UpdateSystemBankAccountStatus (UpdateSystemBankAccountStatusRequest) returns (UpdateSystemBankAccountStatusReply);
+}
+
+message GetBankPaymentCodeRequest {
+  BankName bank_name = 1;
+  int64 merchant_user_id = 2;
+}
+message GetBankPaymentCodeReply {
+  string code = 1;
+  string account_number = 2;
+  string account_name = 3;
+  string branch = 4;
+}
+
+message CreateBankingWithdrawRequest {
+  uint64 amount = 1 [(validate.rules).uint64.gt = 0];
+  int64 merchant_user_id = 2;
+  string merchant_user_account_number = 3;
+  string merchant_user_account_name = 4;
+  BankName bank_name = 5;
+}
+message CreateBankingWithdrawReply {
+  int64 payment_id = 1;
+}
+
+message CreateBankingTopUpRequest {
+  uint64 amount = 1 [(validate.rules).uint64.gt = 0];
+  string payment_code = 2;
+  string merchant_user_account_number = 3;
+  string merchant_user_account_name = 4;
+  string system_account_number = 5;
+  string system_account_name = 6;
+  string note = 7;
+}
+message CreateBankingTopUpReply {}
+
+message ApproveBankingTopUpRequest {
+  int64 payment_id = 1;
+  string image_url = 2;
+  string tx_id = 3;
+  string note = 4;
+}
+message ApproveBankingTopUpReply {}
+
+message RejectBankingTopUpRequest {
+  int64 payment_id = 1;
+  string note = 2;
+  bool is_merchant_call = 3;
+}
+message RejectBankingTopUpReply {}
+
+message ApproveBankingWithdrawRequest {
+  int64 payment_id = 1;
+  string note = 4;
+}
+message ApproveBankingWithdrawReply {}
+
+message SubmitBankingWithdrawRequest {
+  int64 payment_id = 1;
+  BankName bank_name = 2;
+  string account_number = 3;
+  string account_name = 4;
+  uint64 amount = 5;
+  uint64 fee = 6;
+  string image_url = 7;
+  string tx_id = 8;
+  string note = 9;
+}
+message SubmitBankingWithdrawReply {}
+
+message GetIsMerchantUserBankAccountVerifiedRequest {
+  string account_number = 1;
+  string account_name = 2;
+}
+message GetIsMerchantUserBankAccountVerifiedReply {
+  bool verified = 1;
+}
+
+message RejectBankingWithdrawRequest {
+  int64 payment_id = 1;
+  string note = 2;
+  bool is_merchant_call = 3;
+}
+message RejectBankingWithdrawReply {}
+
+message CancelBankingWithdrawRequest {
+  int64 payment_id = 1;
+}
+message CancelBankingWithdrawReply {}
+
+message ListSystemBankAccountsRequest {
+  repeated int64 merchant_ids = 1;
+  repeated BankStatus statues = 2;
+  repeated BankName bank_names = 3;
+  repeated int64 ids = 4;
+  uint32 page = 10[(validate.rules).uint32.gt = 0];
+  uint32 size = 11 [(validate.rules).uint32.gt = 0];
+}
+message ListSystemBankAccountsReply {
+  int64 total = 1;
+  uint32 current_page = 2;
+  repeated SystemBank records = 3;
+}
+
+message CreateSystemBankAccountRequest {
+  int64 account_id = 1;
+  string bank_name = 2;
+  int64 merchant_id = 3 [(validate.rules).int64.gt = 0];
+  string account_number = 4;
+  string account_name = 5;
+  string branch = 6;
+  uint64 balance = 7;
+  uint64 daily_balance_limit = 8;
+  string error_code = 9;
+}
+
+message CreateSystemBankAccountReply {}
+
+message VerifyMerchantUserBankAccountRequest {
+  BankName bank_name = 1;
+  string account_number = 2 [(validate.rules).string = {
+    pattern:   "[0-9]",
+    min_len: 8,
+  }];
+  string account_name = 3 [(validate.rules).string = {
+    pattern:   "[a-zA-Z]",
+  }];
+}
+message VerifyMerchantUserBankAccountReply {}
+
+message ImportSystemBankAccountRequest {
+  repeated CreateSystemBankAccountRequest records = 1;
+}
+message ImportSystemBankAccountReply {}
+
+message ValidateImportSystemBankAccountRequest {
+  repeated CreateSystemBankAccountRequest records = 1;
+}
+message ValidateImportSystemBankAccountReply {
+  repeated CreateSystemBankAccountRequest duplicated_records = 1;
+  repeated CreateSystemBankAccountRequest valid_records = 2;
+  repeated CreateSystemBankAccountRequest duplicated_account_id_records = 3;
+  repeated CreateSystemBankAccountRequest invalid_records = 4;
+}
+
+message UpdateSystemBankAccountStatusRequest {
+  int64 id = 1 [(validate.rules).int64.gt = 0];
+  BankStatus status = 2;
+}
+message UpdateSystemBankAccountStatusReply {}
+
+message ListSystemBankAccountByPaymentInfoRequest {
+  int64 merchant_id = 1;
+  BankName bank_name = 2;
+}
+message ListSystemBankAccountByPaymentInfoReply {
+  repeated SystemBank records = 1;
+}
+
+enum BankName {
+  BANK_UNSPECIFIED = 0;
+  VIETCOMBANK = 1; // Vietcombank
+  SACOMBANK = 2; // Sacomank
+  ACB = 3; // ACB
+  VIETINBANK = 4; // Vietinbank
+  BIDV = 5; // BIDV
+}
+
+message SystemBank {
+  int64 id = 1;
+  BankName bank_name = 4;
+  BankStatus status = 5;
+  int64 merchant_id = 6;
+  string account_number = 7;
+  string account_name = 8;
+  string branch = 9;
+  uint64 balance = 10;
+  uint64 daily_balance_limit = 11;
+  int64 daily_used_amount = 12;
+  uint64 daily_balance = 13;
+}
+
+enum BankStatus {
+  BANK_STATUS_UNSPECIFIED = 0;
+  BANK_STATUS_ACTIVE = 1;
+  BANK_STATUS_IN_ACTIVE = 2;
+}
+
+message ConductBankPayment {
+  BankName bank_name = 1;
+  string account_number = 2;
+  string account_name = 3;
+  uint64 amount = 4;
+  uint64 fee = 5;
+}
+
+message BankingPaymentDetail {
+  int64 id = 1;
+  BankName merchant_user_bank_name = 2;
+  string merchant_user_account_number = 3;
+  string merchant_user_account_name = 4;
+  BankName system_bank_name = 5;
+  string system_account_number = 6;
+  string system_account_name = 7;
+  uint64 amount = 8;
+  string image_url = 9;
+  string tx_id = 10;
+  string payment_code = 11;
+  uint64 fee = 12;
+  int64 merchant_user_id = 13;
+  google.protobuf.Timestamp created_at = 20;
+  google.protobuf.Timestamp updated_at = 30;
+}

@@ -1,0 +1,25 @@
+listener:
+  tcp:
+    address: 0.0.0.0
+    port: 8080
+    secure: false
+
+logger:
+  pretty: true
+  level: DEBUG
+
+database:
+  url: ${CAPTAIN_DATABASE_URL}
+  debug: false
+
+redis:
+  address: ${CAPTAIN_REDIS_ADDRESS}
+
+ent_cache_config:
+  ttl: 30
+
+feature_flag:
+  enable_ent_cache: false
+  enable_allow_all: false
+  whitelisted_paths:
+    - /hose/upload

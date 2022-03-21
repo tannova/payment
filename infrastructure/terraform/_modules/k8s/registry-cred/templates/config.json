@@ -1,0 +1,9 @@
+{
+  "auths": {
+    "https://registry.gitlab.com":{
+      "username":"${username}",
+      "password":"${password}",
+      "auth":"${auth}"
+    }
+  }
+}

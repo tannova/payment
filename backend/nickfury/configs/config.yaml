@@ -1,0 +1,28 @@
+listener:
+  tcp:
+    address: 0.0.0.0
+    port: 8080
+    secure: false
+
+logger:
+  pretty: false
+  level: DEBUG
+
+storage:
+  mysql:
+    url: ${NICKFURY_DATABASE_URL}
+    debug: false
+
+skip_paths:
+  - /status
+  - /greyhole.mylog.MyLog/ListLogs
+  - /greyhole.myrole.MyRole/ListActions
+  - /greyhole.myrole.MyRole/ListRoles
+  - /greyhole.myrole.MyRole/ListResources
+  - /greyhole.myrole.MyRole/ListGroups
+  - /greyhole.myid.TheCoffeeHouse/GetUsers
+  - /greyhole.myid.MyID/SignIn
+  - /greyhole.myid.MyID/ConfirmSignIn
+  - /upload
+  
+is_user_id_optional: false

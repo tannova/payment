@@ -1,0 +1,9 @@
+syntax = "proto3";
+
+package bishop;
+
+option go_package = "gitlab.com/mcuc/monorepo/backend/bishop/pkg/api;bishop";
+
+service Bishop {
+}
+

@@ -1,0 +1,39 @@
+syntax = "proto3";
+
+package config.stark;
+
+option go_package = "gitlab.com/mcuc/monorepo/backend/stark/pkg/config;stark";
+
+import "night-kit/api/carbon.proto";
+import "validate/validate.proto";
+
+message Config {
+  carbon.Listener listener = 1 [ (validate.rules).message = {required : true} ];
+  carbon.Logger logger = 2 [ (validate.rules).message = {required : true} ];
+  carbon.Database database = 3;
+  carbon.TCPSocket natasha = 4;
+  carbon.TCPSocket blackwidow = 5;
+  carbon.TCPSocket groot = 6;
+
+  DefaultSetting default_setting = 10;
+}
+
+message DefaultSetting {
+  PaymentCode payment = 1;
+  PaymentCrypto crypto = 2;
+  map<string, string> map_bank_name = 3;
+  map<string, string> map_e_wallet_name = 4;
+}
+
+message PaymentCode {
+  int32 method = 1;
+  int32 provider = 2;
+  int32 merchant_id = 3;
+  int32 user_payment_id = 4;
+}
+
+message PaymentCrypto {
+  string domain = 1;
+  int64 store_id = 2;
+  string secret_key = 3;
+}

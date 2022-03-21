@@ -1,0 +1,95 @@
+{
+  "swagger": "2.0",
+  "info": {
+    "title": "groot/api/groot.proto",
+    "version": "version not set"
+  },
+  "tags": [
+    {
+      "name": "Groot"
+    }
+  ],
+  "consumes": [
+    "application/json"
+  ],
+  "produces": [
+    "application/json"
+  ],
+  "paths": {},
+  "definitions": {
+    "grootCard": {
+      "type": "object",
+      "properties": {
+        "code": {
+          "type": "string"
+        },
+        "serial": {
+          "type": "string"
+        },
+        "telcoName": {
+          "$ref": "#/definitions/grootTelcoName"
+        },
+        "amount": {
+          "type": "string",
+          "format": "uint64"
+        },
+        "price": {
+          "type": "string",
+          "format": "uint64"
+        }
+      }
+    },
+    "grootChargeCardReply": {
+      "type": "object"
+    },
+    "grootGetTxIDByCardReply": {
+      "type": "object",
+      "properties": {
+        "txId": {
+          "type": "string"
+        }
+      }
+    },
+    "grootTelcoName": {
+      "type": "string",
+      "enum": [
+        "BRANCH_UNSPECIFIED",
+        "VIETTEL",
+        "MOBIPHONE",
+        "VINAPHONE",
+        "VIETNAMMOBILE"
+      ],
+      "default": "BRANCH_UNSPECIFIED"
+    },
+    "protobufAny": {
+      "type": "object",
+      "properties": {
+        "typeUrl": {
+          "type": "string"
+        },
+        "value": {
+          "type": "string",
+          "format": "byte"
+        }
+      }
+    },
+    "rpcStatus": {
+      "type": "object",
+      "properties": {
+        "code": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "message": {
+          "type": "string"
+        },
+        "details": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/protobufAny"
+          }
+        }
+      }
+    }
+  }
+}

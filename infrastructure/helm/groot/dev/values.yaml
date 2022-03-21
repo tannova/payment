@@ -1,0 +1,25 @@
+replicaCount: 1
+namespace: default
+vaultsecret:
+  enabled: true
+  secretName: groot
+  path: kv/apps/groot
+image:
+  secret: alopay
+  repository: registry.gitlab.com
+  pullPolicy: Always
+  name: mcuc/monorepo/groot
+  tag: dev
+env:
+  - name: GROOT_DATABASE_URL
+    valueFrom:
+      secretKeyRef:
+        name: groot
+        key: database_url
+resources: {}
+service:
+  type: ClusterIP
+  ports:
+    - name: "grpc"
+      port: 8080
+      targetPort: 8080

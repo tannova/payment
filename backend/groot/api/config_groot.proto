@@ -1,0 +1,25 @@
+syntax = "proto3";
+
+package mcuc.groot.config;
+
+option go_package = "gitlab.com/mcuc/monorepo/backend/groot/pkg/config;groot";
+
+import "night-kit/api/carbon.proto";
+import "validate/validate.proto";
+
+message Config {
+  carbon.Listener listener = 1 [ (validate.rules).message = {required : true} ];
+  carbon.Logger logger = 2 [ (validate.rules).message = {required : true} ];
+  carbon.Database database = 3  [(validate.rules).message = {required : true}];
+
+  FeatureFlag feature_flag = 20;
+  map<string, Provider> providers = 21;
+}
+
+message Provider {
+  map<string, string> data = 1;
+}
+
+message FeatureFlag {
+  bool enable_get_card_from_third_party = 1;
+}

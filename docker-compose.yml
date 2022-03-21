@@ -1,0 +1,204 @@
+version: '3.7'
+
+services:
+  bifrost:
+    build:
+      context: backend
+      dockerfile: envoy.dockerfile
+      args:
+        - service=bifrost
+        - BOT_USER
+        - BOT_PRIVATE_TOKEN
+        - CI_PROJECT_NAMESPACE
+    image: registry.gitlab.com/mcuc/monorepo/bifrost:latest
+    restart: "no"
+    container_name: bifrost
+    ports:
+      - 9080:8080
+      - 9082:8082
+    command: /app/scripts/docker-entrypoint.sh
+    environment:
+      - DOGSTATSD_HOST_IP
+      - ENVOY_UID=0
+    logging:
+      options:
+        max-file: "2"
+        max-size: 10m
+
+  heimdall:
+    build:
+      context: backend
+      dockerfile: envoy.dockerfile
+      args:
+        - service=heimdall
+        - BOT_USER
+        - BOT_PRIVATE_TOKEN
+        - CI_PROJECT_NAMESPACE
+    image: registry.gitlab.com/mcuc/monorepo/heimdall:latest
+    restart: "no"
+    container_name: heimdall
+    ports:
+      - 7080:8080
+    command: /app/scripts/docker-entrypoint.sh
+    environment:
+      - DOGSTATSD_HOST_IP
+      - ENVOY_UID=0
+    logging:
+      options:
+        max-file: "2"
+        max-size: 10m
+
+  shield:
+    build:
+      context: backend
+      dockerfile: shield/build/Dockerfile
+      args:
+        - service=shield
+        - BOT_USER
+        - BOT_PRIVATE_TOKEN
+        - CI_PROJECT_NAMESPACE
+    image: registry.gitlab.com/mcuc/monorepo/shield:latest
+    container_name: shield
+    ports:
+      - 10080:8080
+    environment:
+      - SHIELD_DATABASE_URL
+      - SHIELD_TEMPLATE_FOLDER_PATH
+      - SHIELD_DYNAMIC_LINK_VERIFICATION
+      - SHIELD_DYNAMIC_LINK_RESET_PASSWORD
+    command: [ "./app/server", "-c", "/app/config.yaml" ]
+    logging:
+      options:
+        max-file: "2"
+        max-size: 10m
+
+  natasha:
+    build:
+      context: backend
+      dockerfile: go.dockerfile
+      args:
+        - service=natasha
+        - BOT_USER
+        - BOT_PRIVATE_TOKEN
+        - CI_PROJECT_NAMESPACE
+    image: registry.gitlab.com/mcuc/monorepo/natasha:latest
+    container_name: natasha
+    environment:
+      - NATASHA_DATABASE_URL
+    command: [ "./app/server", "-c", "/app/config.yaml" ]
+    logging:
+      options:
+        max-file: "2"
+        max-size: 10m
+
+  frontend-loki:
+    build:
+      context: frontend
+      dockerfile: frontend.Dockerfile
+      args:
+        - SERVICE=loki
+        - ENV=dev
+    image: registry.gitlab.com/mcuc/monorepo/frontend-loki:latest
+    restart: "no"
+    container_name: frontend-loki
+    ports:
+      - 3000:80
+    logging:
+      options:
+        max-file: "2"
+        max-size: 10m
+
+  stark:
+    build:
+      context: backend
+      dockerfile: go.dockerfile
+      args:
+        - service=stark
+        - BOT_USER
+        - BOT_PRIVATE_TOKEN
+        - CI_PROJECT_NAMESPACE
+    image: registry.gitlab.com/mcuc/monorepo/stark:latest
+    container_name: stark
+    environment:
+      - STARK_DATABASE_URL
+    ports:
+      - 12080:8080
+    command: [ "./app/server", "-c", "/app/config.yaml" ]
+    logging:
+      options:
+        max-file: "2"
+        max-size: 10m
+
+  groot:
+    build:
+      context: backend
+      dockerfile: go.dockerfile
+      args:
+        - service=groot
+        - BOT_USER
+        - BOT_PRIVATE_TOKEN
+        - CI_PROJECT_NAMESPACE
+    image: registry.gitlab.com/mcuc/monorepo/groot:latest
+    container_name: groot
+    ports:
+      - 11080:8081
+    environment:
+      - GROOT_DATABASE_URL
+    command: [ "./app/server", "-c", "/app/config.yaml" ]
+    logging:
+      options:
+        max-file: "2"
+        max-size: 10m
+
+  nickfury:
+    build:
+      context: backend
+      dockerfile: nickfury/build/Dockerfile
+      args:
+        - service=nickfury
+        - BOT_USER
+        - BOT_PRIVATE_TOKEN
+        - CI_PROJECT_NAMESPACE
+    image: registry.gitlab.com/mcuc/monorepo/nickfury:latest
+    container_name: nickfury
+    environment:
+      - NICKFURY_DATABASE_URL
+    command: [ "./app/server", "-c", "/app/config.yaml" ]
+    logging:
+      options:
+        max-file: "2"
+        max-size: 10m
+
+  hawkeye:
+    build:
+      context: backend
+      dockerfile: hawkeye/build/Dockerfile
+      args:
+        - service=hawkeye
+        - BOT_USER
+        - BOT_PRIVATE_TOKEN
+        - CI_PROJECT_NAMESPACE
+    image: registry.gitlab.com/mcuc/monorepo/hawkeye:latest
+    container_name: hawkeye
+    command: [ "./app/server", "-c", "/app/config.yaml" ]
+    logging:
+      options:
+        max-file: "2"
+        max-size: 10m
+
+  bishop:
+    build:
+      context: backend
+      dockerfile: go.dockerfile
+      args:
+        - service=bishop
+        - BOT_USER
+        - BOT_PRIVATE_TOKEN
+        - CI_PROJECT_NAMESPACE
+    image: registry.gitlab.com/mcuc/monorepo/bishop:latest
+    container_name: bishop
+    command: [ "./app/server", "-c", "/app/config.yaml" ]
+    logging:
+      options:
+        max-file: "2"
+        max-size: 10m

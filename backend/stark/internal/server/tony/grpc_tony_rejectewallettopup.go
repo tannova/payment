@@ -1,0 +1,156 @@
+package tony
+
+import (
+	"context"
+	"gitlab.com/mcuc/monorepo/backend/stark/pkg/utils"
+	"google.golang.org/grpc/metadata"
+	"time"
+
+	"gitlab.com/greyhole/night-kit/pkg/logging"
+	"go.uber.org/zap"
+
+	natasha "gitlab.com/mcuc/monorepo/backend/natasha/pkg/api"
+	"gitlab.com/mcuc/monorepo/backend/stark/internal/module/jarvis"
+	stark "gitlab.com/mcuc/monorepo/backend/stark/pkg/api"
+	ep "gitlab.com/mcuc/monorepo/backend/stark/pkg/ent/payment"
+	"gitlab.com/mcuc/monorepo/backend/stark/pkg/tx"
+)
+
+func (s *tonyServer) RejectEWalletTopUp(
+	ctx context.Context,
+	request *stark.RejectEWalletTopUpRequest,
+) (*stark.RejectEWalletTopUpReply, error) {
+	if err := request.Validate(); err != nil {
+		return nil, err
+	}
+	logger := logging.Logger(ctx)
+	_, tellerID, err := getUserID(ctx)
+	if err != nil {
+		logger.Error("can not get teller id", zap.Error(err))
+		return nil, err
+	}
+
+	metaData, err := utils.GetMetadata(ctx)
+	if err != nil {
+		return nil, err
+	}
+	outCtx := metadata.NewOutgoingContext(ctx, metaData)
+
+	now := time.Now().UTC()
+	expectedType := int32(stark.PaymentType_TOPUP)
+	expectedMethod := int32(stark.MethodType_E)
+	expectedStatus := int32(stark.Status_CREATED)
+	nextSuccessStatus := int32(stark.Status_REJECTING)
+
+	err = tx.WithTransaction(ctx, logger, s.entClient, func(ctx context.Context, tx tx.Tx) error {
+		payment, err := tx.Client().Payment.
+			Query().
+			Where(
+				ep.IDEQ(request.GetPaymentId()),
+				ep.TypeEQ(expectedType),
+				ep.MethodEQ(expectedMethod),
+				ep.StatusEQ(expectedStatus),
+			).
+			ForUpdate().
+			First(ctx)
+		if err != nil {
+			logger.Error("get payment error", zap.Error(err))
+			return err
+		}
+
+		paymentDetail, err := payment.QueryPaymentEWalletDetail().Only(ctx)
+		if err != nil {
+			logger.Error("get payment detail error", zap.Error(err))
+			return err
+		}
+
+		payment, err = tx.Client().Payment.UpdateOne(payment).
+			SetStatus(int32(nextSuccessStatus)).
+			SetUpdatedBy(tellerID).
+			SetUpdatedAt(now).
+			Save(ctx)
+		if err != nil {
+			logger.Error("update status payment error", zap.Error(err))
+			return err
+		}
+
+		_, err = tx.Client().Revision.Create().
+			SetCreatedAt(now).
+			SetCreatedBy(tellerID).
+			SetUpdatedBy(tellerID).
+			SetPaymentID(payment.ID).
+			SetStatus(int32(nextSuccessStatus)).
+			SetNote(request.GetNote()).
+			SetPayment(payment).
+			Save(ctx)
+
+		if err != nil {
+			logger.Error("create revision err", zap.Error(err))
+			return err
+		}
+
+		// Start network call to MEX to inform
+		reply, err := s.natashaClient.GetMerchant(outCtx, &natasha.GetMerchantRequest{
+			Id: payment.MerchantID,
+		})
+		if err != nil {
+			logger.Error("get merchant err", zap.Error(err))
+			return err
+		}
+
+		completeRequest, err := createCompletePaymentRequest(
+			ctx,
+			payment,
+			paymentDetail,
+			// No need balance for this case
+			// Will add this value when needed
+			0,
+		)
+		if err != nil {
+			logger.Error("get merchant err", zap.Error(err))
+			return err
+		}
+		err = s.jarvisClient.CompletePayment(
+			ctx,
+			reply.Merchant.WebhookUrl,
+			completeRequest,
+			s.completeRejectEWalletTopupCallback)
+
+		if err != nil {
+			logger.Error("complete payment err", zap.Error(err))
+			return err
+		}
+
+		if request.IsMerchantCall {
+			s.blackWidowClient.NotifyRejectPayment(ctx, &natasha.NotifyRejectPaymentRequest{
+				MerchantId: payment.MerchantID,
+				Reason:     request.Note,
+				PaymentId:  payment.ID,
+			})
+		}
+
+		return nil
+	})
+
+	if err != nil {
+		return nil, err
+	}
+
+	return &stark.RejectEWalletTopUpReply{}, nil
+}
+
+func (s *tonyServer) completeRejectEWalletTopupCallback(
+	request *jarvis.CompletePaymentRequest,
+	responseErr error,
+) {
+	s.completeCallback(
+		request,
+		responseErr,
+		PaymentTransition{
+			ExpectedType:      stark.PaymentType_TOPUP,
+			ExpectedMethod:    stark.MethodType_E,
+			ExpectedStatus:    stark.Status_REJECTING,
+			NextSuccessStatus: stark.Status_REJECTED,
+			NextFailedStatus:  stark.Status_REJECT_FAILED,
+		})
+}

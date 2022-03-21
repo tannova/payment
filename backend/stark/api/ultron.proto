@@ -1,0 +1,342 @@
+syntax = "proto3";
+
+package mcuc.stark.ultron;
+
+option go_package = "gitlab.com/mcuc/monorepo/backend/stark/pkg/api;stark";
+
+
+service Ultron {
+  // MEX call to MCU
+  rpc CreateCryptoWithdraw (CreateCryptoWithdrawRequest) returns (CreateCryptoWithdrawReply);
+  // MEX call to MCU
+  rpc CancelCryptoWithdraw (CancelCryptoWithdrawRequest) returns (CancelCryptoWithdrawReply);
+  // Teller approve it
+  rpc ApproveCryptoWithdraw (ApproveCryptoWithdrawRequest) returns (ApproveCryptoWithdrawReply);
+  // Teller approve it
+  rpc SubmitCryptoWithdraw (SubmitCryptoWithdrawRequest) returns (SubmitCryptoWithdrawReply);
+  // Teller reject it
+  rpc RejectCryptoWithdraw (RejectCryptoWithdrawRequest) returns (RejectCryptoWithdrawReply);
+
+  // CreateCryptoTopUp will be done by callback from UMO
+  // MEX call to cancel topup if teller hasn't handled it
+  rpc CancelCryptoTopUp (CancelCryptoTopUpRequest) returns (CancelCryptoTopUpReply);
+  // Teller approve it
+  rpc ApproveCryptoTopUp(ApproveCryptoTopUpRequest) returns (ApproveCryptoTopUpReply);
+  // Teller inject itc
+  rpc RejectCryptoTopUp(RejectCryptoTopUpRequest) returns (RejectCryptoTopUpReply);
+
+  // MEX call to MCU
+  rpc GetCryptoWallet (GetCryptoWalletRequest) returns (GetCryptoWalletReply);
+  // Admin APIs
+  rpc ValidateCryptoWallets (ValidateCryptoWalletsRequest) returns (ValidateCryptoWalletsReply);
+  rpc ImportCryptoWallets (ImportCryptoWalletsRequest) returns (ImportCryptoWalletsReply);
+  rpc ListCryptoWallets (ListCryptoWalletsRequest) returns (ListCryptoWalletsReply);
+
+  rpc ValidateCryptoHotWallets (ValidateCryptoHotWalletsRequest) returns (ValidateCryptoHotWalletsReply);
+  rpc ImportCryptoHotWallets (ImportCryptoHotWalletsRequest) returns (ImportCryptoHotWalletsReply);
+  rpc ListCryptoHotWallets (ListCryptoHotWalletsRequest) returns (ListCryptoHotWalletsReply);
+  // Utility API to call for process payment
+  rpc GetSystemCryptoHotWallets (GetSystemCryptoHotWalletsRequest) returns (GetSystemCryptoHotWalletsReply);
+
+
+  rpc LoadCryptoWallets (LoadCryptoWalletsRequest) returns (LoadCryptoWalletsReply);
+
+  rpc UpdateAutoTransferCryptoWithdraw (UpdateAutoTransferCryptoWithdrawRequest) returns (UpdateAutoTransferCryptoWithdrawReply);
+  rpc GetCryptoSettings (GetCryptoSettingsRequest) returns (GetCryptoSettingsReply);
+
+  // Callback from UMO
+  rpc CallbackTransaction (CallbackTransactionRequest) returns (CallbackTransactionReply);
+}
+
+enum CryptoType {
+  CRYPTO_TYPE_UNSPECIFIED = 0;
+  USDT = 1;
+}
+
+enum CryptoNetworkType {
+  CRYPTO_NETWORK_TYPE_UNSPECIFIED = 0;
+  ERC20 = 1;
+  BEP20 = 2;
+  TRC20 = 3;
+}
+
+enum CryptoWalletStatus {
+  CRYPTO_NETWORK_STATUS_UNSPECIFIED = 0;
+  AVAILABLE = 1;
+  USED = 2;
+  BANNED = 3;
+}
+
+enum CryptoHotWalletStatus {
+  CRYPTO_HOT_WALLET_STATUS_UNSPECIFIED = 0;
+  CRYPTO_HOT_WALLET_STATUS_ACTIVE = 1;
+  CRYPTO_HOT_WALLET_STATUS_IN_ACTIVE = 2;
+}
+
+message CreateCryptoWithdrawRequest {
+  CryptoWalletName crypto_wallet_name = 1;
+  string address = 2;
+  CryptoType crypto_type = 3;
+  CryptoNetworkType crypto_network_type = 4;
+  // USDT
+  double amount = 5;
+  // Only for reference to validate
+  uint64 amount_reference = 6;
+  int64 merchant_user_id = 7;
+}
+
+message CreateCryptoWithdrawReply {
+  int64 payment_id = 1;
+}
+
+message CancelCryptoWithdrawRequest {
+  int64 payment_id = 1;
+  string note = 2;
+}
+
+message CancelCryptoWithdrawReply {
+}
+
+message CancelCryptoTopUpRequest {
+  int64 payment_id = 1;
+  string note = 2;
+}
+
+message CancelCryptoTopUpReply {
+}
+
+message ApproveCryptoWithdrawRequest {
+  int64 payment_id = 1;
+  string note = 2;
+}
+
+message ApproveCryptoWithdrawReply {
+}
+
+message SubmitCryptoWithdrawRequest {
+  int64 payment_id = 1;
+  string sender_address = 2;
+  double amount = 3;
+  double fee = 4;
+  string tx_hash = 5;
+  string image_url = 6;
+  string note = 7;
+}
+
+message SubmitCryptoWithdrawReply {
+}
+
+
+message RejectCryptoWithdrawRequest {
+  int64 payment_id = 1;
+  string note = 2;
+  bool is_merchant_call = 3;
+}
+
+message RejectCryptoWithdrawReply {
+}
+
+message ApproveCryptoTopUpRequest {
+  int64 payment_id = 1;
+  string note = 2;
+}
+
+message ApproveCryptoTopUpReply {
+}
+
+message RejectCryptoTopUpRequest {
+  int64 payment_id = 1;
+  string note = 2;
+  bool is_merchant_call = 3;
+}
+
+message RejectCryptoTopUpReply {
+}
+
+message GetCryptoWalletRequest {
+  CryptoType crypto_type = 1;
+  CryptoNetworkType crypto_network_type = 2;
+  int64 merchant_user_id = 3;
+}
+
+message GetCryptoWalletReply {
+  string address = 1;
+}
+
+message LoadCryptoWalletsRequest {
+  CryptoType crypto_type = 1;
+  CryptoNetworkType crypto_network_type = 2;
+}
+
+message LoadCryptoWalletsReply {
+  string data = 1;
+}
+
+message ValidateCryptoWalletsRequest {
+  repeated CryptoWallet records = 1;
+}
+
+message ValidateCryptoWalletsReply {
+  repeated CryptoWallet valid_records = 1;
+  repeated CryptoWallet duplicated_records = 2;
+}
+
+message ImportCryptoWalletsRequest {
+  repeated CryptoWallet wallets = 1;
+}
+
+message ImportCryptoWalletsReply {
+  repeated CryptoWallet wallets = 1;
+}
+
+message ListCryptoWalletsRequest {
+  uint32 page = 1;
+  uint32 size = 2;
+  repeated string addresses = 3;
+  repeated CryptoType crypto_types = 4;
+  repeated CryptoNetworkType crypto_network_types = 5;
+  repeated CryptoWalletStatus statuses = 6;
+  repeated int64 merchant_ids = 7;
+}
+
+message ListCryptoWalletsReply {
+  repeated CryptoWallet records = 1;
+  uint64 total = 2;
+  uint32 current_page = 3;
+}
+
+message ValidateCryptoHotWalletsRequest {
+  repeated SystemCryptoHotWallet records = 1;
+}
+
+message ValidateCryptoHotWalletsReply {
+  repeated SystemCryptoHotWallet valid_records = 1;
+  repeated SystemCryptoHotWallet duplicated_records = 2;
+}
+
+message ImportCryptoHotWalletsRequest {
+  repeated SystemCryptoHotWallet records = 1;
+}
+
+message ImportCryptoHotWalletsReply {
+  repeated SystemCryptoHotWallet records = 1;
+}
+
+message ListCryptoHotWalletsRequest {
+  uint32 page = 1;
+  uint32 size = 2;
+  repeated string addresses = 3;
+  repeated CryptoType crypto_types = 4;
+  repeated CryptoNetworkType crypto_network_types = 5;
+  repeated CryptoWalletStatus statuses = 6;
+  repeated int64 merchant_ids = 7;
+}
+
+message ListCryptoHotWalletsReply {
+  repeated SystemCryptoHotWallet records = 1;
+  uint64 total = 2;
+  uint32 current_page = 3;
+}
+
+message GetSystemCryptoHotWalletsRequest {
+  CryptoType crypto_type = 1;
+  CryptoNetworkType crypto_network_type = 2;
+  int64 merchant_id = 3;
+  double amount = 4;
+}
+
+message GetSystemCryptoHotWalletsReply {
+  repeated SystemCryptoHotWallet records = 1;
+}
+
+message SystemCryptoHotWallet {
+  int64 id = 1;
+  string address = 2;
+  int64 merchant_id = 3;
+  CryptoType crypto_type = 4;
+  CryptoNetworkType crypto_network_type = 5;
+  double total_balance = 6;
+  double balance = 7;
+  CryptoHotWalletStatus status = 8;
+}
+
+
+//{
+//    "store_id": "730497933308329985",
+//    "app_trans_id": "76357153247880806503",
+//    "trans_id": "763571243071898065",
+//    "sender": "QWE_TCQSekV61CYMcwcqKuLDfRNdrs7AtGYbMr",
+//    "recipient": "QWE_TAxaP1Wqb4ZfMDP98688PTTbsLVmJKG3cX",
+//    "currency": "QWE",
+//    "transaction_fee": 0,
+//    "tx_hash": "dec12f7645ab1e0ee4efb30326dbbba3bd68916fcb380473c7114b0334a9f0ad",
+//    "amount": 20,
+//    "received_amount": 20,
+//    "type": "DEPOSIT",
+//    "state": "SUCCESS",
+//    "message": "",
+//    "bc_fee": 0.1,
+//    "bc_fee_currency": "QWE"
+//}
+
+message CallbackTransactionRequest {
+  string store_id = 1;
+  string app_trans_id = 2;
+  string trans_id = 3;
+  string sender = 4;
+  string recipient = 5;
+  string currency = 6;
+  double transaction_fee = 7;
+  string tx_hash = 8;
+  double amount = 9;
+  double received_amount = 10;
+  string type = 11;
+  string state = 12;
+  string message = 13;
+  double bc_fee = 14;
+  string bc_fee_currency = 15;
+}
+
+message CallbackTransactionReply {
+}
+
+enum CryptoWalletName {
+  CRYPTO_WALLET_NAME_UNSPECIFIED = 0;
+  UMO = 1;
+}
+
+message CryptoWallet {
+  int64 id = 1;
+  string address = 2;
+  int64 merchant_id = 3;
+  CryptoType crypto_type = 4;
+  CryptoNetworkType crypto_network_type = 5;
+  CryptoWalletStatus status = 6;
+}
+
+message CryptoPaymentDetail {
+  CryptoType crypto_type = 1;
+  CryptoNetworkType crypto_network_type = 2;
+  CryptoWalletName crypto_wallet_name = 3;
+  string receiver_address = 4;
+  string sender_address = 5;
+  double amount = 6;
+  double received_amount = 7;
+  string tx_hash = 8;
+  double fee = 9;
+  string image_url = 10;
+}
+
+
+message UpdateAutoTransferCryptoWithdrawRequest {
+  bool enabled = 1;
+}
+
+message UpdateAutoTransferCryptoWithdrawReply {
+}
+
+message GetCryptoSettingsRequest {}
+
+message GetCryptoSettingsReply {
+  bool auto_transfer_withdraw_crypto = 1;
+}

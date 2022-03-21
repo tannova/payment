@@ -1,0 +1,41 @@
+listener:
+  tcp:
+    address: 0.0.0.0
+    port: 8080
+    secure: false
+
+logger:
+  pretty: true
+  level: DEBUG
+
+database:
+  url: ${GROOT_DATABASE_URL}
+  debug: false
+
+feature_flag:
+  enable_get_card_from_third_party: true
+
+providers:
+  banthe247:
+    data:
+      url: ${GROOT_BAN_THE_247_URL}
+      userName: ${GROOT_BAN_THE_247_USERNAME}
+      password: ${GROOT_BAN_THE_247_PASSWORD}
+      security: ${GROOT_BAN_THE_247_SECURITY}
+  thuthecao:
+    data:
+      url: ${GROOT_THU_THE_CAO_URL}
+      apiKey: ${GROOT_THU_THE_CAO_API_KEY}
+      callbackUrl: ${GROOT_THU_THE_CAO_CALLBACK_URL}
+  thenhanh365:
+    data:
+      url: ${GROOT_THE_NHANH_365_URL}
+      apiKey: ${GROOT_THE_NHANH_365_API_KEY}
+      callbackUrl: ${GROOT_THE_NHANH_365_CALLBACK_URL}
+  naptudong:
+    data:
+      url: ${GROOT_NAP_TU_DONG_URL}
+      partnerID: "${GROOT_NAP_TU_DONG_PARTNER_ID}"
+      partnerKey: "${GROOT_NAP_TU_DONG_PARTNER_KEY}"
+
+

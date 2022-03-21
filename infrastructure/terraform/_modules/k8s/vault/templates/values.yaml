@@ -1,0 +1,16 @@
+server:
+  ingress:
+    enabled: true
+    annotations:
+      external-dns.alpha.kubernetes.io/hostname: ${domain}
+      kubernetes.io/ingress.class: alb
+      alb.ingress.kubernetes.io/scheme: internet-facing
+      alb.ingress.kubernetes.io/healthcheck-path: /sys/host-info
+      alb.ingress.kubernetes.io/certificate-arn: ${cert_arn}
+    hosts:
+      - host: ${domain}
+        paths:
+          - /*
+    tls:
+      - hosts:
+        - ${domain}

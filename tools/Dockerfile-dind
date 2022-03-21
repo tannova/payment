@@ -1,0 +1,21 @@
+FROM docker:stable
+RUN apk update
+RUN apk add --no-cache \
+    coreutils \
+    python3 \
+    py-pip \
+    git \
+    openssh \
+    curl \
+    make \
+    bash \
+    jq
+# RUN apk add --no-cache --repository=http://dl-cdn.alpinelinux.org/alpine/edge/testing \
+#    jo
+
+# Install awscli
+RUN pip install --upgrade \
+    awscli
+
+# Set entrypoint
+CMD ["/bin/bash"]

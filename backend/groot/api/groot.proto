@@ -1,0 +1,65 @@
+syntax = "proto3";
+
+package mcuc.groot;
+
+option go_package = "gitlab.com/mcuc/monorepo/backend/groot/pkg/api;groot";
+
+service Groot {
+  rpc GetCard(GetCardRequest) returns (Card) {}
+  rpc ChargeCard(ChargeCardRequest) returns (ChargeCardReply) {}
+  rpc GetTxIDByCard(GetTxIDByCardRequest) returns (GetTxIDByCardReply) {}
+}
+
+message GetCardRequest {
+  TelcoName telco_name = 1;
+  uint64 amount = 2;
+  repeated string providers = 3;
+}
+
+message ChargeCardRequest {
+  Card card = 1;
+  string payment_id = 2;
+  repeated string providers = 3;
+}
+
+message GetTxIDByCardRequest {
+  Card card = 1;
+}
+
+message GetTxIDByCardReply {
+  string tx_id = 1;
+}
+
+message ChargeCardReply {}
+
+message Card {
+  string code = 1;
+  string serial = 2;
+  TelcoName telco_name = 3;
+  uint64 amount = 4;
+  uint64 price = 5;
+}
+
+message Provider {
+  int64 id = 1;
+  string name = 2;
+  string key = 3;
+  ProviderType provider_type = 4;
+  int64 priority = 5;
+  bool enabled = 6;
+}
+
+enum ProviderType {
+  PROVIDER_TYPE_UNSPECIFIED = 0;
+  TOPUP = 1;
+  WITHDRAW = 2;
+}
+
+enum TelcoName {
+  BRANCH_UNSPECIFIED = 0;
+  VIETTEL = 1;
+  MOBIPHONE = 2;
+  VINAPHONE = 3;
+  VIETNAMMOBILE = 4;
+}
+

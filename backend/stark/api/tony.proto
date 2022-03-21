@@ -1,0 +1,193 @@
+syntax = "proto3";
+
+package mcuc.stark.tony;
+
+option go_package = "gitlab.com/mcuc/monorepo/backend/stark/pkg/api;stark";
+
+import "google/protobuf/timestamp.proto";
+import "validate/validate.proto";
+
+service Tony {
+  // MEX call to requedt a payment for their user to make payment to e_wallet
+  rpc GetEWalletPaymentCode(GetEWalletPaymentCodeRequest) returns (GetEWalletPaymentCodeReply);
+  rpc CancelEWalletTopUp (CancelEWalletTopUpRequest) returns (CancelEWalletTopUpReply);
+  
+  // Teller call it when recevie sms or check e_wallet account
+  rpc CreateEWalletTopUp(CreateEWalletTopUpRequest) returns (CreateEWalletTopUpReply);
+  // Teller approve it
+  rpc ApproveEWalletTopUp(ApproveEWalletTopUpRequest) returns (ApproveEWalletTopUpReply);
+  // Teller reject it
+  rpc RejectEWalletTopUp(RejectEWalletTopUpRequest) returns (RejectEWalletTopUpReply);
+
+  // Utility API to call for process payment
+  rpc GetSystemEWallets (GetSystemEWalletsRequest) returns (GetSystemEWalletsReply);
+
+  // APIs for manage System EWallet for topup
+  rpc CreateSystemEWallet (CreateSystemEWalletRequest) returns (CreateSystemEWalletReply);
+  rpc UpdateSystemEWalletStatus (UpdateSystemEWalletStatusRequest) returns (UpdateSystemEWalletStatusReply);
+  rpc ListSystemEWallets (ListSystemEWalletsRequest) returns (ListSystemEWalletsReply);
+  rpc ValidateSystemEWallets (ValidateSystemEWalletsRequest) returns (ValidateSystemEWalletsReply);
+  rpc ImportSystemEWallets (ImportSystemEWalletsRequest) returns (ImportSystemEWalletsReply);
+}
+
+message GetEWalletPaymentCodeRequest {
+  EWalletName e_wallet_name = 1;
+  int64 merchant_user_id = 2;
+}
+
+message GetEWalletPaymentCodeReply {
+  string code = 1;
+  EWalletName e_wallet_name = 2;
+  string account_phone_number = 3;
+  string account_name = 4;
+}
+
+message CancelEWalletTopUpRequest {
+  int64 payment_id = 1;
+  string note = 2;
+}
+
+message CancelEWalletTopUpReply {
+}
+
+message CreateEWalletTopUpRequest {
+  uint64 amount = 1 [(validate.rules).uint64.gt = 0];
+  string payment_code = 2;
+  string merchant_user_account_phone_number = 3;
+  string merchant_user_account_name = 4;
+  string system_account_phone_number = 5;
+  string system_account_name = 6;
+  string note = 7;
+}
+
+message CreateEWalletTopUpReply {
+  int64 payment_id = 1;
+}
+
+message ApproveEWalletTopUpRequest {
+  int64 payment_id = 1;
+  string image_url = 2;
+  string tx_id = 3;
+  string note = 4;
+}
+
+message ApproveEWalletTopUpReply {
+  int64 payment_id = 1;
+}
+
+message RejectEWalletTopUpRequest {
+  int64 payment_id = 1;
+  string note = 2;
+  bool is_merchant_call = 3;
+}
+
+message RejectEWalletTopUpReply {
+}
+
+message CreateSystemEWalletRequest {
+  int64 account_id = 1;
+  EWalletName account_wallet_name = 2;
+  string account_phone_number = 3;
+  string account_name = 4;
+  uint64 balance = 5;
+  uint64 daily_balance = 6;
+  uint64 daily_balance_limit = 7;
+  int64 daily_used_amount = 8;
+  int64 merchant_id = 9 [(validate.rules).int64.gt = 0];
+  string error_code = 10;
+}
+
+message CreateSystemEWalletReply {
+}
+
+message UpdateSystemEWalletStatusRequest {
+  int64 id = 1 [(validate.rules).int64.gt = 0];
+  EWalletStatus status = 2;
+}
+
+message UpdateSystemEWalletStatusReply {
+  SystemEWallet e_wallet = 1;
+}
+
+message ListSystemEWalletsRequest {
+  uint32 page = 1;
+  uint32 size = 2;
+  repeated int64 ids = 3;
+  repeated int64 merchant_ids = 4;
+  repeated EWalletStatus statuses = 5;
+  repeated EWalletName e_wallet_names = 6;
+}
+
+message ListSystemEWalletsReply {
+  repeated SystemEWallet records = 1;
+  uint64 total = 2;
+  uint32 current_page = 3;
+}
+
+message ValidateSystemEWalletsRequest {
+  repeated CreateSystemEWalletRequest records = 1;
+}
+
+message ValidateSystemEWalletsReply {
+  repeated CreateSystemEWalletRequest valid_records = 1;
+  repeated CreateSystemEWalletRequest duplicated_records = 2;
+  repeated CreateSystemEWalletRequest invalid_records = 3;
+  repeated CreateSystemEWalletRequest duplicated_id_records = 4;
+}
+
+message ImportSystemEWalletsRequest {
+  repeated CreateSystemEWalletRequest records = 1;
+}
+
+message ImportSystemEWalletsReply {
+}
+
+message GetSystemEWalletsRequest {
+  EWalletName e_wallet_name = 1;
+  int64 merchant_id = 2;
+}
+
+message GetSystemEWalletsReply {
+  repeated SystemEWallet system_e_wallets = 1;
+}
+
+enum EWalletName {
+  EWALLET_NAME_UNSPECIFIED = 0;
+  MOMO = 1;
+  ZALOPAY = 2;
+}
+
+enum EWalletStatus {
+  EWALLET_STATUS_UNSPECIFIED = 0;
+  EWALLET_ACTIVE = 1;
+  EWALLET_IN_ACTIVE = 2;
+}
+
+message EWalletPaymentDetail {
+  string payment_code = 1;
+  EWalletName e_wallet_name = 2;
+  string merchant_user_account_phone_number = 3;
+  string merchant_user_account_name = 4;
+  string system_account_phone_number = 5;
+  string system_account_name = 6;
+  uint64 amount = 7;
+  uint64 fee = 8;
+  int64 merchant_user_id = 9;
+}
+
+message SystemEWallet {
+  int64 id = 1;
+  google.protobuf.Timestamp created_at = 2;
+  google.protobuf.Timestamp updated_at = 3;
+  string created_by = 4;
+  string updated_by = 5;
+  EWalletName e_wallet_name = 6;
+  EWalletStatus status = 7;
+  int64 merchant_id = 8;
+  string account_phone_number = 9;
+  string account_name = 10;
+  uint64 balance = 11;
+  uint64 daily_balance = 12;
+  uint64 daily_balance_limit = 13;
+  int64 daily_used_amount = 14;
+}

@@ -1,0 +1,34 @@
+profile: alopay
+region: ap-southeast-1
+environment: beta
+vpc_cidr: 172.18.0.0/16
+cluster_name: alopay-eks-beta
+internal_access: false
+ssh_key_name: alopay-eks-beta
+instance_type: t2.medium
+route53_hosted_zone: alopay.inspirelab.io
+bifrost_domain: bifrost.beta.alopay.inspirelab.io
+kibana_domain: kibana.beta.alopay.inspirelab.io
+vault_domain: vault.beta.alopay.inspirelab.io
+cloudfront_cache_policy_id: edf0bf4e-601d-4119-9c4d-9d9ccac624ac
+heimdall_domain: heimdall.beta.alopay.inspirelab.io
+
+# Hose
+hose_domain: hose.beta.alopay.inspirelab.io
+hose_bucket: alopay-hose-beta
+
+# Loki
+loki_bucket: alopay-frontend-loki-beta
+loki_domain: loki.beta.alopay.inspirelab.io
+loki_username: loki
+loki_password: beta@alopay
+
+# viper
+viper_bucket: alopay-frontend-viper-beta
+viper_domain: viper.beta.alopay.inspirelab.io
+viper_username: viper
+viper_password: beta@alopay
+
+# falcon
+falcon_domain: falcon.beta.alopay.inspirelab.io
+falcon_bucket: alopay-falcon-beta

@@ -1,0 +1,279 @@
+{
+  "swagger": "2.0",
+  "info": {
+    "title": "stark/api/tony.proto",
+    "version": "version not set"
+  },
+  "tags": [
+    {
+      "name": "Tony"
+    }
+  ],
+  "consumes": [
+    "application/json"
+  ],
+  "produces": [
+    "application/json"
+  ],
+  "paths": {},
+  "definitions": {
+    "googlerpcStatus": {
+      "type": "object",
+      "properties": {
+        "code": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "message": {
+          "type": "string"
+        },
+        "details": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/protobufAny"
+          }
+        }
+      }
+    },
+    "protobufAny": {
+      "type": "object",
+      "properties": {
+        "typeUrl": {
+          "type": "string"
+        },
+        "value": {
+          "type": "string",
+          "format": "byte"
+        }
+      }
+    },
+    "tonyApproveEWalletTopUpReply": {
+      "type": "object",
+      "properties": {
+        "paymentId": {
+          "type": "string",
+          "format": "int64"
+        }
+      }
+    },
+    "tonyCancelEWalletTopUpReply": {
+      "type": "object"
+    },
+    "tonyCreateEWalletTopUpReply": {
+      "type": "object",
+      "properties": {
+        "paymentId": {
+          "type": "string",
+          "format": "int64"
+        }
+      }
+    },
+    "tonyCreateSystemEWalletReply": {
+      "type": "object"
+    },
+    "tonyCreateSystemEWalletRequest": {
+      "type": "object",
+      "properties": {
+        "accountId": {
+          "type": "string",
+          "format": "int64"
+        },
+        "accountWalletName": {
+          "$ref": "#/definitions/tonyEWalletName"
+        },
+        "accountPhoneNumber": {
+          "type": "string"
+        },
+        "accountName": {
+          "type": "string"
+        },
+        "balance": {
+          "type": "string",
+          "format": "uint64"
+        },
+        "dailyBalance": {
+          "type": "string",
+          "format": "uint64"
+        },
+        "dailyBalanceLimit": {
+          "type": "string",
+          "format": "uint64"
+        },
+        "dailyUsedAmount": {
+          "type": "string",
+          "format": "int64"
+        },
+        "merchantId": {
+          "type": "string",
+          "format": "int64"
+        },
+        "errorCode": {
+          "type": "string"
+        }
+      }
+    },
+    "tonyEWalletName": {
+      "type": "string",
+      "enum": [
+        "EWALLET_NAME_UNSPECIFIED",
+        "MOMO",
+        "ZALOPAY"
+      ],
+      "default": "EWALLET_NAME_UNSPECIFIED"
+    },
+    "tonyEWalletStatus": {
+      "type": "string",
+      "enum": [
+        "EWALLET_STATUS_UNSPECIFIED",
+        "EWALLET_ACTIVE",
+        "EWALLET_IN_ACTIVE"
+      ],
+      "default": "EWALLET_STATUS_UNSPECIFIED"
+    },
+    "tonyGetEWalletPaymentCodeReply": {
+      "type": "object",
+      "properties": {
+        "code": {
+          "type": "string"
+        },
+        "eWalletName": {
+          "$ref": "#/definitions/tonyEWalletName"
+        },
+        "accountPhoneNumber": {
+          "type": "string"
+        },
+        "accountName": {
+          "type": "string"
+        }
+      }
+    },
+    "tonyGetSystemEWalletsReply": {
+      "type": "object",
+      "properties": {
+        "systemEWallets": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/tonySystemEWallet"
+          }
+        }
+      }
+    },
+    "tonyImportSystemEWalletsReply": {
+      "type": "object"
+    },
+    "tonyListSystemEWalletsReply": {
+      "type": "object",
+      "properties": {
+        "records": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/tonySystemEWallet"
+          }
+        },
+        "total": {
+          "type": "string",
+          "format": "uint64"
+        },
+        "currentPage": {
+          "type": "integer",
+          "format": "int64"
+        }
+      }
+    },
+    "tonyRejectEWalletTopUpReply": {
+      "type": "object"
+    },
+    "tonySystemEWallet": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "format": "int64"
+        },
+        "createdAt": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "updatedAt": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "createdBy": {
+          "type": "string"
+        },
+        "updatedBy": {
+          "type": "string"
+        },
+        "eWalletName": {
+          "$ref": "#/definitions/tonyEWalletName"
+        },
+        "status": {
+          "$ref": "#/definitions/tonyEWalletStatus"
+        },
+        "merchantId": {
+          "type": "string",
+          "format": "int64"
+        },
+        "accountPhoneNumber": {
+          "type": "string"
+        },
+        "accountName": {
+          "type": "string"
+        },
+        "balance": {
+          "type": "string",
+          "format": "uint64"
+        },
+        "dailyBalance": {
+          "type": "string",
+          "format": "uint64"
+        },
+        "dailyBalanceLimit": {
+          "type": "string",
+          "format": "uint64"
+        },
+        "dailyUsedAmount": {
+          "type": "string",
+          "format": "int64"
+        }
+      }
+    },
+    "tonyUpdateSystemEWalletStatusReply": {
+      "type": "object",
+      "properties": {
+        "eWallet": {
+          "$ref": "#/definitions/tonySystemEWallet"
+        }
+      }
+    },
+    "tonyValidateSystemEWalletsReply": {
+      "type": "object",
+      "properties": {
+        "validRecords": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/tonyCreateSystemEWalletRequest"
+          }
+        },
+        "duplicatedRecords": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/tonyCreateSystemEWalletRequest"
+          }
+        },
+        "invalidRecords": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/tonyCreateSystemEWalletRequest"
+          }
+        },
+        "duplicatedIdRecords": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/tonyCreateSystemEWalletRequest"
+          }
+        }
+      }
+    }
+  }
+}

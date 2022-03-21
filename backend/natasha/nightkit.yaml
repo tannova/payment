@@ -1,0 +1,23 @@
+project:
+  name: natasha
+
+gen:
+  profiling:
+    port: 6060
+    enable: false
+  dockerfile:
+    enable: false
+  ent:
+    enable: false
+  client:
+    enable: false
+  helm:
+    enable: false
+  proto:
+    go:
+      - natasha.proto
+      - config_natasha.proto
+    js:
+      - natasha.proto
+    py:
+      - natasha.proto

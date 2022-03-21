@@ -1,0 +1,427 @@
+{
+  "swagger": "2.0",
+  "info": {
+    "title": "natasha/api/natasha.proto",
+    "version": "version not set"
+  },
+  "tags": [
+    {
+      "name": "Natasha"
+    },
+    {
+      "name": "BlackWidow"
+    },
+    {
+      "name": "Romanoff"
+    }
+  ],
+  "consumes": [
+    "application/json"
+  ],
+  "produces": [
+    "application/json"
+  ],
+  "paths": {},
+  "definitions": {
+    "natashaCancelVoucherReply": {
+      "type": "object"
+    },
+    "natashaCreateMerchantReply": {
+      "type": "object",
+      "properties": {
+        "merchant": {
+          "$ref": "#/definitions/natashaMerchant"
+        }
+      }
+    },
+    "natashaCreateVoucherReply": {
+      "type": "object",
+      "properties": {
+        "voucher": {
+          "$ref": "#/definitions/natashaVoucher"
+        }
+      }
+    },
+    "natashaGetMerchantBalanceReply": {
+      "type": "object",
+      "properties": {
+        "balance": {
+          "type": "string",
+          "format": "uint64",
+          "title": "balance = total_money_in - total_money_out"
+        },
+        "totalMoneyIn": {
+          "type": "string",
+          "format": "uint64",
+          "title": "total_money_in = sum(USER_TOP_UP + MERCHANT_DEPOSIT)"
+        },
+        "totalMoneyOut": {
+          "type": "string",
+          "format": "uint64",
+          "title": "total_money_out = sum(USER_WITHDRAW + MERCHANT_WITHDRAW)"
+        },
+        "receiptVoucher": {
+          "$ref": "#/definitions/natashaVoucherSummary",
+          "title": "total_receipt_voucher = sum(MERCHANT_DEPOSIT)"
+        },
+        "paymentVoucher": {
+          "$ref": "#/definitions/natashaVoucherSummary",
+          "title": "total_payment_voucher = = sum(MERCHANT_WITHDRAW)"
+        },
+        "balanceForMexWithdrawProfit": {
+          "type": "string",
+          "format": "int64",
+          "title": "balance_for_mex_withdraw_profit = sum(USER_TOP_UP) + sum(MERCHANT_WITHDRAW_PROFIT) + sum(USER_WITHDRAW)"
+        },
+        "balanceForMexWithdrawFunds": {
+          "type": "string",
+          "format": "int64",
+          "title": "balance_for_mex_withdraw_funds = sum(MERCHANT_DEPOSIT_ADDITIONAL) + sum(MERCHANT_WITHDRAW_PROFIT) + sum(USER_WITHDRAW)"
+        },
+        "profit": {
+          "type": "string",
+          "format": "int64",
+          "title": "profit = total_money_in - total_money_out"
+        }
+      }
+    },
+    "natashaGetMerchantReply": {
+      "type": "object",
+      "properties": {
+        "merchant": {
+          "$ref": "#/definitions/natashaMerchant"
+        }
+      }
+    },
+    "natashaGetVoucherReply": {
+      "type": "object",
+      "properties": {
+        "voucher": {
+          "$ref": "#/definitions/natashaVoucher"
+        }
+      }
+    },
+    "natashaListMerchantsReply": {
+      "type": "object",
+      "properties": {
+        "records": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/natashaMerchant"
+          }
+        },
+        "total": {
+          "type": "string",
+          "format": "uint64"
+        },
+        "currentPage": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "currentSize": {
+          "type": "integer",
+          "format": "int64"
+        }
+      }
+    },
+    "natashaListPaymentsReply": {
+      "type": "object",
+      "properties": {
+        "records": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/natashaPayment"
+          }
+        },
+        "total": {
+          "type": "string",
+          "format": "uint64"
+        },
+        "currentPage": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "currentSize": {
+          "type": "integer",
+          "format": "int64"
+        }
+      }
+    },
+    "natashaListVouchersReply": {
+      "type": "object",
+      "properties": {
+        "records": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/natashaVoucher"
+          }
+        },
+        "total": {
+          "type": "string",
+          "format": "uint64"
+        },
+        "currentPage": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "currentSize": {
+          "type": "integer",
+          "format": "int64"
+        }
+      }
+    },
+    "natashaMakePaymentReply": {
+      "type": "object",
+      "properties": {
+        "balance": {
+          "type": "string",
+          "format": "uint64"
+        },
+        "payment": {
+          "$ref": "#/definitions/natashaPayment"
+        }
+      }
+    },
+    "natashaMerchant": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "format": "int64"
+        },
+        "name": {
+          "type": "string"
+        },
+        "logoPath": {
+          "type": "string"
+        },
+        "emailContact": {
+          "type": "string"
+        },
+        "webhookUrl": {
+          "type": "string"
+        },
+        "slackWebhookUrl": {
+          "type": "string"
+        },
+        "safetyLimit": {
+          "type": "string",
+          "format": "uint64"
+        },
+        "createdBy": {
+          "type": "string",
+          "title": "reserve slots"
+        },
+        "updatedBy": {
+          "type": "string"
+        },
+        "createdAt": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "updatedAt": {
+          "type": "string",
+          "format": "date-time"
+        }
+      }
+    },
+    "natashaNotifyRejectPaymentReply": {
+      "type": "object"
+    },
+    "natashaPayment": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "format": "int64"
+        },
+        "merchantId": {
+          "type": "string",
+          "format": "int64"
+        },
+        "paymentType": {
+          "$ref": "#/definitions/natashaPaymentType",
+          "title": "money_in = MERCHANT_WITHDRAW + USER_WITHDRAW\nmoney_out = MERCHANT_DEPOSIT + USER_TOP_UP"
+        },
+        "amount": {
+          "type": "string",
+          "format": "int64"
+        },
+        "createdBy": {
+          "type": "string",
+          "title": "reserve slots"
+        },
+        "updatedBy": {
+          "type": "string"
+        },
+        "createdAt": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "updatedAt": {
+          "type": "string",
+          "format": "date-time"
+        }
+      }
+    },
+    "natashaPaymentType": {
+      "type": "string",
+      "enum": [
+        "DEPOSIT_UNSPECIFIED",
+        "USER_TOP_UP",
+        "USER_WITHDRAW",
+        "MERCHANT_DEPOSIT_ADDITIONAL",
+        "MERCHANT_DEPOSIT_COMPENSATION",
+        "MERCHANT_WITHDRAW_PROFIT",
+        "MERCHANT_WITHDRAW_FUNDS"
+      ],
+      "default": "DEPOSIT_UNSPECIFIED",
+      "title": "- MERCHANT_DEPOSIT_ADDITIONAL: Receipt Voucher\n - MERCHANT_WITHDRAW_PROFIT: Payment Voucher\nWe'll change the balance of the MEX immediately when create two kind of WITHDRAW\nand then refund if it's cancelled"
+    },
+    "natashaSubmitVoucherReply": {
+      "type": "object"
+    },
+    "natashaUpdateMerchantReply": {
+      "type": "object",
+      "properties": {
+        "merchant": {
+          "$ref": "#/definitions/natashaMerchant"
+        }
+      }
+    },
+    "natashaVoucher": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "format": "int64"
+        },
+        "merchantId": {
+          "type": "string",
+          "format": "int64"
+        },
+        "paymentId": {
+          "type": "string",
+          "format": "int64"
+        },
+        "amount": {
+          "type": "string",
+          "format": "int64"
+        },
+        "type": {
+          "$ref": "#/definitions/natashaPaymentType"
+        },
+        "status": {
+          "$ref": "#/definitions/natashaVoucherStatus"
+        },
+        "imageUrl": {
+          "type": "string"
+        },
+        "note": {
+          "type": "string"
+        },
+        "payeeProvider": {
+          "type": "string",
+          "format": "uint64"
+        },
+        "payeeAccount": {
+          "type": "string"
+        },
+        "payeeName": {
+          "type": "string"
+        },
+        "payerProvider": {
+          "type": "string",
+          "format": "uint64"
+        },
+        "payerAccount": {
+          "type": "string"
+        },
+        "payerName": {
+          "type": "string"
+        },
+        "txId": {
+          "type": "string"
+        },
+        "handledBy": {
+          "type": "string"
+        },
+        "handlerNote": {
+          "type": "string"
+        },
+        "createdBy": {
+          "type": "string",
+          "title": "reserve slots"
+        },
+        "updatedBy": {
+          "type": "string"
+        },
+        "createdAt": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "updatedAt": {
+          "type": "string",
+          "format": "date-time"
+        }
+      }
+    },
+    "natashaVoucherStatus": {
+      "type": "string",
+      "enum": [
+        "STATUS_UNSPECIFIED",
+        "PROCESSING",
+        "COMPLETED",
+        "CANCELED"
+      ],
+      "default": "STATUS_UNSPECIFIED"
+    },
+    "natashaVoucherSummary": {
+      "type": "object",
+      "properties": {
+        "total": {
+          "type": "string",
+          "format": "uint64"
+        },
+        "totalIn30days": {
+          "type": "string",
+          "format": "uint64"
+        },
+        "percent": {
+          "type": "number",
+          "format": "double"
+        }
+      }
+    },
+    "protobufAny": {
+      "type": "object",
+      "properties": {
+        "typeUrl": {
+          "type": "string"
+        },
+        "value": {
+          "type": "string",
+          "format": "byte"
+        }
+      }
+    },
+    "rpcStatus": {
+      "type": "object",
+      "properties": {
+        "code": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "message": {
+          "type": "string"
+        },
+        "details": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/protobufAny"
+          }
+        }
+      }
+    }
+  }
+}

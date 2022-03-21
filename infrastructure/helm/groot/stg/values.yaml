@@ -1,0 +1,72 @@
+replicaCount: 1
+namespace: default
+vaultsecret:
+  enabled: true
+  secretName: groot
+  path: kv/apps/groot
+image:
+  secret: alopay
+  repository: registry.gitlab.com
+  pullPolicy: Always
+  name: mcuc/monorepo/groot
+  tag: stg
+resources: {}
+env:
+  - name: GROOT_DATABASE_URL
+    valueFrom:
+      secretKeyRef:
+        name: groot
+        key: database_url
+  - name: GROOT_BAN_THE_247_URL
+    value: https://banthe247.com
+  - name: GROOT_BAN_THE_247_USERNAME
+    valueFrom:
+      secretKeyRef:
+        name: groot
+        key: ban_the_247_username
+  - name: GROOT_BAN_THE_247_PASSWORD
+    valueFrom:
+      secretKeyRef:
+        name: groot
+        key: ban_the_247_password
+  - name: GROOT_BAN_THE_247_SECURITY
+    valueFrom:
+      secretKeyRef:
+        name: groot
+        key: ban_the_247_security
+  - name: GROOT_THU_THE_CAO_URL
+    value: https://www.thuthecao.com
+  - name: GROOT_THU_THE_CAO_API_KEY
+    valueFrom:
+      secretKeyRef:
+        name: groot
+        key: thu_the_cao_api_key
+  - name: GROOT_THU_THE_CAO_CALLBACK_URL
+    value: https://bifrost.stg.alopay.inspirelab.io/bishop/thuthecao
+  - name: GROOT_THE_NHANH_365_URL
+    value: http://THENHANH365.COM
+  - name: GROOT_THE_NHANH_365_API_KEY
+    valueFrom:
+      secretKeyRef:
+        name: groot
+        key: the_nhanh_365_api_key
+  - name: GROOT_THE_NHANH_365_CALLBACK_URL
+    value: https://bifrost.stg.alopay.inspirelab.io/bishop/thenhanh365
+  - name: GROOT_NAP_TU_DONG_URL
+    value: https://naptudong.com
+  - name: GROOT_NAP_TU_DONG_PARTNER_ID
+    valueFrom:
+      secretKeyRef:
+        name: groot
+        key: nap_tu_dong_partner_id
+  - name: GROOT_NAP_TU_DONG_PARTNER_KEY
+    valueFrom:
+      secretKeyRef:
+        name: groot
+        key: nap_tu_dong_partner_key
+service:
+  type: ClusterIP
+  ports:
+    - name: "grpc"
+      port: 8080
+      targetPort: 8080

@@ -1,0 +1,144 @@
+listener:
+  tcp:
+    address: 0.0.0.0
+    port: 8080
+    secure: false
+
+logger:
+  pretty: false
+  level: DEBUG
+
+database:
+  url: ${SHIELD_DATABASE_URL}
+  debug: false
+
+access_token_jwt_signing:
+  expires_time: 86400
+  private_key: "-----BEGIN RSA PRIVATE KEY-----\n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\n-----END RSA PRIVATE KEY-----"
+  issuer: AloPay
+  audience: Hero
+
+id_token_jwt_signing:
+  expires_time: 864000
+  private_key: "-----BEGIN RSA PRIVATE KEY-----\n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\n-----END RSA PRIVATE KEY-----"
+  issuer: AloPay
+  audience: Hero
+
+postman:
+  address: hawkeye
+  port: 8080
+  secure: false
+
+my_role:
+  address: captain
+  port: 8080
+  secure: false
+
+#recaptcha:
+#  address: recaptcha
+#  port: 8080
+#  secure: false
+
+credentials:
+  my_id:
+    enabled: true
+
+# optional features
+
+create_user:
+  enabled: true
+  #  send_credential:
+  #    email:
+  #      subject: Your AloPay credential
+  #      template: new_credential_email.html
+  ##    sms:
+  ##      template: new_credential_sms.html
+  email_otp:
+    email:
+      subject: Complete your AloPay credential
+      template: create_password_email.html
+    otp:
+      length: 6
+      expiry: 300
+    link_format: ${SHIELD_LINK_FORMAT_CREATE_PASSWORD}
+
+sign_up:
+  enabled: false
+  max_sign_up_per_day: 5
+
+sign_in:
+  max_fail_times: 5
+  confirmation:
+    enabled: true
+    email_otp:
+      email:
+        subject: Confirm sign in AloPay
+        template: sign_in_confirm_email.html
+      otp:
+        length: 6
+        expiry: 300
+      link_format: ${SHIELD_LINK_FORMAT_SIGN_IN_CONFIRMATION}
+#  sms_otp:
+#    sms:
+#      template: "sign_in_confirm_sms.txt"
+#    otp:
+#      length: 6
+#      expiry: 60
+#      creation_limit_time: 60
+
+update_email:
+  enabled: false
+  email_verification:
+    enabled: true
+    email_otp:
+      email:
+        subject: Verify email in AloPay
+        template: verification_email.html
+      otp:
+        length: 6
+        expiry: 300
+        creation_limit_time: 60
+      link_format: ${SHIELD_LINK_FORMAT_VERIFY_EMAIL}
+
+update_phone_number:
+  enabled: false
+  phone_number_verification:
+    enabled: true
+    sms_otp:
+      sms:
+        template: verification_sms.txt
+      otp:
+        length: 6
+        expiry: 300
+        creation_limit_time: 60
+
+multi_alive_tokens: false
+
+reset_password:
+  enabled: true
+  by_email:
+    enabled: true
+    email_otp:
+      email:
+        subject: Reset Password in AloPay
+        template: password_reset_email.html
+      otp:
+        length: 6
+        expiry: 300
+        creation_limit_time: 60
+      link_format: ${SHIELD_LINK_FORMAT_RESET_PASSWORD}
+  by_phone_number:
+    enabled: true
+    sms_otp:
+      sms:
+        template: password_reset_sms.html
+      otp:
+        length: 6
+        expiry: 300
+        creation_limit_time: 60
+
+cache:
+  enabled: true
+  ttl: 86400
+  redis:
+    address: ${SHIELD_REDIS_ADDRESS}

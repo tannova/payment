@@ -1,0 +1,216 @@
+syntax = "proto3";
+
+package mcuc.stark.howard;
+
+option go_package = "gitlab.com/mcuc/monorepo/backend/stark/pkg/api;stark";
+
+import "google/protobuf/timestamp.proto";
+import "validate/validate.proto";
+import "stark/api/stark.proto";
+
+service Howard {
+  rpc GetStatistic (GetStatisticRequest) returns (GetStatisticReply);
+  rpc GetProcessingPerformance (GetProcessingPerformanceRequest) returns (GetProcessingPerformanceReply);
+  rpc GetTotalAmount (GetTotalAmountRequest) returns (GetTotalAmountReply);
+  rpc GetIncomeStatement (GetReportRequest) returns (GetIncomeStatementReply);
+  rpc GetPaymentToday (GetReportRequest) returns (GetPaymentTodayReply);
+  rpc GetProfitRate (GetReportRequest) returns (GetProfitRateReply);
+  rpc GetAllocationTopUpRate (GetReportRequest) returns (GetAllocationTopUpRateReply);
+  rpc GetAllocationWithdrawRate (GetReportRequest) returns (GetAllocationWithdrawRateReply);
+  rpc GetTopPaymentMethod (GetReportRequest) returns (GetTopPaymentMethodReply);
+  rpc GetTopTeller (GetReportRequest) returns (GetTopTellerReply);
+  rpc GetSellReportByTimeRange (GetSellReportByTimeRangeRequest) returns (GetSellReportByTimeRangeReply);
+  rpc GetSellReportByMerchant (GetSellReportByMerchantRequest) returns (GetSellReportByMerchantReply);
+  rpc GetSellReportByPaymentMethod (GetSellReportByPaymentMethodRequest) returns (GetSellReportByPaymentMethodReply);
+  rpc GetSellReportByTeller (GetSellReportByTellerRequest) returns (GetSellReportByTellerReply);
+}
+
+enum StatisticFilterType {
+  STATISTIC_FILTER_UNSPECIFIED = 0;
+  STATISTIC_FILTER_DAILY = 1;
+  STATISTIC_FILTER_WEEKLY = 2;
+  STATISTIC_FILTER_MONTHLY = 3;
+}
+
+message StatisticDetail {
+  uint64 number = 1;
+  double percent = 2; // >0 <0
+}
+
+message GetStatisticRequest {
+  mcuc.stark.PaymentType payment_type = 3;
+  StatisticFilterType filter_type = 4;
+  int32 time_zone = 5 [(validate.rules).int32 = {gte: -12, lte: 14}];
+}
+
+message GetStatisticReply {
+  StatisticDetail order = 1;
+  StatisticDetail amount = 2;
+  StatisticDetail user = 3;
+  StatisticDetail arppu = 4;
+}
+
+message GetProcessingPerformanceRequest {
+  google.protobuf.Timestamp from_date = 1;
+  google.protobuf.Timestamp to_date = 2;
+  int64 merchant_id = 3 [(validate.rules).int64.gt = 0];
+}
+
+message GetProcessingPerformanceReply {
+  int64 merchant_id = 1;
+  uint64 total_order = 2;
+  StatisticDetail successfully = 3;
+  StatisticDetail failed = 4;
+  StatisticDetail waiting = 5; // not Complete||failed
+}
+
+message TotalAmountMerchant {
+  int64 merchant_id = 1;
+  uint64 amount = 2;
+}
+
+message TotalAmountDetail {
+  google.protobuf.Timestamp date = 1;
+  repeated TotalAmountMerchant merchant_amounts = 2;
+}
+
+message GetTotalAmountRequest {
+  google.protobuf.Timestamp from_date = 1;
+  google.protobuf.Timestamp to_date = 2;
+  repeated int64 merchants = 3;
+  int32 time_zone = 4 [(validate.rules).int32 = {gte: -12, lte: 14}];
+}
+
+message GetTotalAmountReply {
+  repeated TotalAmountDetail details = 1;
+}
+
+message GetReportRequest {
+  google.protobuf.Timestamp from_date = 1;
+  google.protobuf.Timestamp to_date = 2;
+  int64 merchant_id = 3 [(validate.rules).int64.gt = 0];
+  int32 time_zone = 4 [(validate.rules).int32 = {gte: -12, lte: 14}];
+}
+
+message Income {
+  google.protobuf.Timestamp date = 1;
+  double amount = 2;
+}
+
+message TopUpCompletion {
+  int64 completed = 1;
+  int64 total = 2;
+}
+
+message WithdrawCompletion {
+  int64 completed = 1;
+  int64 total = 2;
+}
+
+message AllocationDetail {
+  mcuc.stark.MethodType method = 1;
+  double amount = 2;
+  double percent = 3;
+}
+
+message PaymentMethodRevenue {
+  mcuc.stark.MethodType method = 1;
+  mcuc.stark.PaymentType type = 2;
+  double amount = 3;
+}
+
+message TellerRevenue {
+  string user_id = 1;
+  double amount = 2;
+}
+
+message GetIncomeStatementReply {
+  repeated Income revenues = 1;
+  repeated Income profits = 2;
+}
+
+message GetPaymentTodayReply {
+  TopUpCompletion top_up_completion = 3;
+  WithdrawCompletion withdraw_completion = 4;
+}
+
+message GetProfitRateReply {
+  double total_revenue = 1;
+  double total_profit = 2;
+  double profit_rate = 3;
+}
+
+message GetAllocationTopUpRateReply {
+  double total_topup = 1;
+  repeated AllocationDetail top_up_allocation_rate = 2;
+}
+
+message GetAllocationWithdrawRateReply {
+  double total_withdraw = 1;
+  repeated AllocationDetail withdraw_allocation_rate = 2;
+}
+
+message GetTopPaymentMethodReply {
+  repeated PaymentMethodRevenue top_payment_method_revenue = 1;
+}
+
+message GetTopTellerReply {
+  repeated TellerRevenue top_teller_revenue = 2;
+}
+
+message SaleReportItem {
+  int64 quantity = 2;
+  double amount = 3;
+  double average = 4;
+  double discount = 5;
+  double revenue = 6;
+  oneof key {
+    google.protobuf.Timestamp date = 7;
+    int64 merchant_id = 8;
+    mcuc.stark.MethodType payment_method = 9;
+    string teller_id = 10;
+  }
+}
+
+message GetSellReportByTimeRangeRequest {
+  google.protobuf.Timestamp from_date = 1;
+  google.protobuf.Timestamp to_date = 2;
+  mcuc.stark.Currency currency = 3;
+  int32 time_zone = 4 [(validate.rules).int32 = {gte: -12, lte: 14}];
+}
+
+message GetSellReportByTimeRangeReply {
+  repeated SaleReportItem top_ups = 1;
+  repeated SaleReportItem withdraws = 2;
+}
+
+message GetSellReportByMerchantRequest {
+  google.protobuf.Timestamp from_date = 1;
+  google.protobuf.Timestamp to_date = 2;
+  mcuc.stark.Currency currency = 3;
+  repeated int64 merchant_ids = 4;
+}
+message GetSellReportByMerchantReply {
+  repeated SaleReportItem top_ups = 1;
+  repeated SaleReportItem withdraws = 2;
+}
+
+message GetSellReportByPaymentMethodRequest {
+  google.protobuf.Timestamp from_date = 1;
+  google.protobuf.Timestamp to_date = 2;
+  mcuc.stark.Currency currency = 3;
+}
+message GetSellReportByPaymentMethodReply {
+  repeated SaleReportItem top_ups = 1;
+  repeated SaleReportItem withdraws = 2;
+}
+
+message GetSellReportByTellerRequest {
+  google.protobuf.Timestamp from_date = 1;
+  google.protobuf.Timestamp to_date = 2;
+  mcuc.stark.Currency currency = 3;
+}
+message GetSellReportByTellerReply {
+  repeated SaleReportItem top_ups = 1;
+  repeated SaleReportItem withdraws = 2;
+}

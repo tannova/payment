@@ -1,0 +1,314 @@
+syntax = "proto3";
+
+package natasha;
+
+option go_package = "gitlab.com/mcuc/monorepo/backend/natasha/pkg/api;natasha";
+
+import "validate/validate.proto";
+import "google/protobuf/timestamp.proto";
+
+service Natasha {
+  rpc CreateMerchant (CreateMerchantRequest) returns (CreateMerchantReply);
+  rpc UpdateMerchant (UpdateMerchantRequest) returns (UpdateMerchantReply);
+  rpc ListMerchants (ListMerchantsRequest) returns (ListMerchantsReply);
+  rpc GetMerchant (GetMerchantRequest) returns (GetMerchantReply);
+}
+
+service BlackWidow {
+  rpc MakePayment (MakePaymentRequest) returns (MakePaymentReply);
+  rpc GetMerchantBalance (GetMerchantBalanceRequest) returns (GetMerchantBalanceReply);
+  rpc ListPayments (ListPaymentsRequest) returns (ListPaymentsReply);
+  rpc NotifyRejectPayment (NotifyRejectPaymentRequest) returns (NotifyRejectPaymentReply);
+}
+
+service Romanoff {
+  rpc ListVouchers (ListVouchersRequest) returns (ListVouchersReply);
+  rpc GetVoucher (GetVoucherRequest) returns (GetVoucherReply);
+  rpc CreateVoucher (CreateVoucherRequest) returns (CreateVoucherReply);
+  rpc SubmitVoucher (SubmitVoucherRequest) returns (SubmitVoucherReply);
+  rpc CancelVoucher (CancelVoucherRequest) returns (CancelVoucherReply);
+}
+
+/*
+  Natasha's message
+*/
+
+message CreateMerchantRequest {
+  string name = 1 [(validate.rules).string.min_len = 6];
+  // logo path is the value that frontend get after upload logo via a upload file service
+  // in this case empty mean no setting value for this field
+  string logo_path = 2;
+  string webhook_url = 3;
+  string email_contact = 4 [(validate.rules).string.email = true];
+  string slack_webhook_url = 5;
+  uint64 safety_limit = 6;
+}
+
+message CreateMerchantReply {
+  Merchant merchant = 1;
+}
+
+message UpdateMerchantRequest {
+  int64 id = 1  [(validate.rules).int64.gt = 0];
+  string name = 2 [(validate.rules).string.min_len = 6];
+  // logo path is the value that frontend get after upload logo via a upload file service
+  // in this case empty mean no setting value for this field
+  string logo_path = 3;
+  string webhook_url = 4;
+  string email_contact = 5;
+  string slack_webhook_url = 6;
+  uint64 safety_limit = 7;
+}
+
+message UpdateMerchantReply {
+  Merchant merchant = 1;
+}
+
+message ListMerchantsRequest {
+  uint32 page = 1;
+  uint32 size = 2;
+  string keyword = 3;
+}
+
+message ListMerchantsReply {
+  repeated Merchant records = 1;
+  uint64 total = 2;
+  uint32 current_page = 3;
+  uint32 current_size = 4;
+}
+
+message GetMerchantRequest {
+  int64 id = 1  [(validate.rules).int64.gt = 0];
+}
+
+message GetMerchantReply {
+  Merchant merchant = 1;
+}
+
+message Merchant {
+  int64 id = 1;
+  string name = 2;
+  string logo_path = 3;
+  string email_contact = 4;
+  string webhook_url = 5;
+  string slack_webhook_url = 6;
+  uint64 safety_limit = 7;
+  /*
+    reserve slots
+  */
+  string created_by = 10;
+  string updated_by = 11;
+  google.protobuf.Timestamp created_at = 12;
+  google.protobuf.Timestamp updated_at = 13;
+}
+
+/*
+  Black Widow's message
+*/
+
+message MakePaymentRequest {
+  int64 merchant_id = 1;
+  uint64 amount = 2;
+  PaymentType type = 3 [(validate.rules).enum = {defined_only: true, in: [1, 2]}];
+}
+
+message MakePaymentReply {
+  uint64 balance = 1;
+  Payment payment = 2;
+}
+
+message GetMerchantBalanceRequest {
+  int64 merchant_id = 1;
+  google.protobuf.Timestamp from_date = 2;
+  google.protobuf.Timestamp to_date = 3;
+}
+
+message GetMerchantBalanceReply {
+  // balance = total_money_in - total_money_out
+  uint64 balance = 1;
+  // total_money_in = sum(USER_TOP_UP + MERCHANT_DEPOSIT)
+  uint64 total_money_in = 3;
+  // total_money_out = sum(USER_WITHDRAW + MERCHANT_WITHDRAW)
+  uint64 total_money_out = 4;
+  // total_receipt_voucher = sum(MERCHANT_DEPOSIT)
+  VoucherSummary receipt_voucher = 5;
+  // total_payment_voucher = = sum(MERCHANT_WITHDRAW)
+  VoucherSummary payment_voucher = 6;
+  // balance_for_mex_withdraw_profit = sum(USER_TOP_UP) + sum(MERCHANT_WITHDRAW_PROFIT) + sum(USER_WITHDRAW)
+  int64 balance_for_mex_withdraw_profit = 7;
+  // balance_for_mex_withdraw_funds = sum(MERCHANT_DEPOSIT_ADDITIONAL) + sum(MERCHANT_WITHDRAW_PROFIT) + sum(USER_WITHDRAW)
+  int64 balance_for_mex_withdraw_funds = 8;
+  // profit = total_money_in - total_money_out
+  int64 profit = 9;
+}
+
+message NotifyRejectPaymentRequest {
+  int64 merchant_id = 1;
+  string reason = 2;
+  int64 payment_id = 3;
+}
+message NotifyRejectPaymentReply {}
+
+message CreateVoucherRequest {
+  int64 merchant_id = 1 [(validate.rules).int64.gt = 0];
+  PaymentType type = 2 [(validate.rules).enum = {defined_only: true, not_in: [0, 1, 2]}];
+  uint64 amount = 3 [(validate.rules).uint64.gt = 0];
+  string note = 4;
+}
+
+message CreateVoucherReply {
+  Voucher voucher = 1;
+}
+
+message SubmitVoucherRequest {
+  int64 id = 1;
+  uint64 payer_provider = 2;
+  string payer_account = 3;
+  string payer_name = 4;
+  uint64 payee_provider = 5;
+  string payee_account = 6;
+  string payee_name = 7;
+  string tx_id = 8;
+  string handler_note = 9;
+  string image_url = 10;
+}
+
+message SubmitVoucherReply {}
+
+message CancelVoucherRequest {
+  int64 id = 1;
+  string note = 2;
+}
+
+message CancelVoucherReply {}
+
+message ListVouchersRequest {
+  int64 merchant_id = 1;
+  // For current version we will not implement filter
+  // by PaymentType for money_in & money_out
+  //
+  /*
+    reserve slots
+  */
+  repeated int32 types = 2; //[]PaymentType
+  int64 id = 3;
+  repeated int32 statuses = 4; //[]VoucherStatus
+  uint32 page = 10;
+  uint32 size = 11;
+}
+
+message ListVouchersReply {
+  repeated Voucher records = 1;
+  uint64 total = 2;
+  uint32 current_page = 3;
+  uint32 current_size = 4;
+}
+
+message GetVoucherRequest {
+  int64 id = 1  [(validate.rules).int64.gt = 0];
+}
+
+message GetVoucherReply {
+  Voucher voucher = 1;
+}
+
+message ListPaymentsRequest {
+  int64 merchant_id = 1;
+  // For current version we will not implement filter
+  // by PaymentType for money_in & money_out
+  //
+  /*
+    reserve slots
+  */
+  repeated int32 types = 2; //[]PaymentType
+  int64 id = 3;
+  google.protobuf.Timestamp from_date = 4;
+  uint32 page = 10;
+  uint32 size = 11;
+}
+
+message ListPaymentsReply {
+  repeated Payment records = 1;
+  uint64 total = 2;
+  uint32 current_page = 3;
+  uint32 current_size = 4;
+}
+
+message Payment {
+  int64 id = 1;
+  int64 merchant_id = 2;
+  // money_in = MERCHANT_WITHDRAW + USER_WITHDRAW
+  // money_out = MERCHANT_DEPOSIT + USER_TOP_UP
+  PaymentType payment_type = 3;
+  int64 amount = 4;
+  /*
+    reserve slots
+  */
+  string created_by = 10;
+  string updated_by = 11;
+  google.protobuf.Timestamp created_at = 12;
+  google.protobuf.Timestamp updated_at = 13;
+}
+
+message VoucherSummary {
+  uint64 total = 1;
+  uint64 total_in_30days = 2;
+  double percent = 3;
+}
+
+message Voucher {
+  int64 id = 1;
+  int64 merchant_id = 2;
+  int64 payment_id = 3;
+  int64 amount = 4;
+  PaymentType type = 5;
+  VoucherStatus status = 6;
+  string image_url = 7;
+  string note = 8;
+  uint64 payee_provider = 9;
+  string payee_account = 10;
+  string payee_name = 11;
+  uint64 payer_provider = 12;
+  string payer_account = 13;
+  string payer_name = 14;
+  string tx_id = 15;
+  string handled_by = 16;
+  string handler_note = 17;
+  /*
+    reserve slots
+  */
+  string created_by = 20;
+  string updated_by = 21;
+  google.protobuf.Timestamp created_at = 22;
+  google.protobuf.Timestamp updated_at = 23;
+}
+
+enum PaymentType {
+  DEPOSIT_UNSPECIFIED = 0;
+  USER_TOP_UP = 1;
+  USER_WITHDRAW = 2;
+  // Receipt Voucher
+  MERCHANT_DEPOSIT_ADDITIONAL = 3;
+  MERCHANT_DEPOSIT_COMPENSATION = 4;
+  // Payment Voucher
+  // We'll change the balance of the MEX immediately when create two kind of WITHDRAW
+  // and then refund if it's cancelled
+  MERCHANT_WITHDRAW_PROFIT = 5;
+  MERCHANT_WITHDRAW_FUNDS = 6;
+}
+
+enum VoucherStatus {
+  STATUS_UNSPECIFIED = 0;
+  PROCESSING = 1;
+  COMPLETED = 2;
+  CANCELED = 3;
+}
+
+enum BankType {
+  BANK_UNSPECIFIED = 0;
+  V = 1; // Vietcombank
+  S = 2; // Sacomank
+  A = 3; // ACB
+  N = 4; // Vietinbank
+  B = 5; // BIDV
+}

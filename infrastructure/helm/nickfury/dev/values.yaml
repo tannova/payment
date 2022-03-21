@@ -1,0 +1,34 @@
+replicaCount: 1
+namespace: default
+vaultsecret:
+  enabled: true
+  secretName: nickfury
+  path: kv/apps/nickfury
+image:
+  secret: alopay
+  repository: registry.gitlab.com
+  pullPolicy: Always
+  name: mcuc/monorepo/nickfury
+  tag: dev
+env:
+  - name: NICKFURY_DATABASE_URL
+    valueFrom:
+      secretKeyRef:
+        name: nickfury
+        key: database_url
+resources: 
+  limits:
+    cpu: 50m
+    memory: 50Mi
+  requests:
+    cpu: 50m
+    memory: 50Mi
+service:
+  type: ClusterIP
+  ports:
+    - name: "grpc"
+      port: 8080
+      targetPort: 8080
+    - name: "http"
+      port: 8081
+      targetPort: 8081

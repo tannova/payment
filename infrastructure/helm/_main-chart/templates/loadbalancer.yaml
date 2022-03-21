@@ -1,0 +1,27 @@
+{{ $loadBalancer := .Values.loadBalancer | default dict}}
+{{- if $loadBalancer.enabled }}
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ include "main-chart.fullname" . }}-nlb
+  annotations:
+    service.beta.kubernetes.io/aws-load-balancer-name: {{ include "main-chart.fullname" . }}-nlb
+    service.beta.kubernetes.io/aws-load-balancer-type: nlb
+    service.beta.kubernetes.io/aws-load-balancer-alpn-policy: HTTP2Preferred
+    {{- if $loadBalancer.sslCertArn}}
+    service.beta.kubernetes.io/aws-load-balancer-ssl-cert: {{ $loadBalancer.sslCertArn }}
+    service.beta.kubernetes.io/aws-load-balancer-ssl-ports: "443"
+    {{- end }}
+    service.beta.kubernetes.io/aws-load-balancer-backend-protocol: TCP
+    service.beta.kubernetes.io/aws-load-balancer-healthcheck-protocol: HTTP
+    service.beta.kubernetes.io/aws-load-balancer-healthcheck-path: {{ $loadBalancer.healthCheckPath | default "/status"}}
+    external-dns.alpha.kubernetes.io/hostname: {{ $loadBalancer.host }}
+spec:
+  ports:
+    - port: {{ default "443" $loadBalancer.port }}
+      targetPort: {{ default "8080" $loadBalancer.targetPort }}
+      protocol: TCP
+  type: LoadBalancer
+  selector:
+    {{- include "main-chart.selectorLabels" . | nindent 4 }}
+{{- end }}

@@ -1,0 +1,17 @@
+sources:
+  - service
+  - ingress
+provider: aws
+serviceAccount:
+  create: true
+  ## Service Account for pods
+  ##
+  name:
+  ## Annotations for the Service Account
+  ##
+  annotations: 
+    "eks.amazonaws.com/role-arn": ${role_arn}
+  aws:
+    zoneType: public
+    region: ${region}
+  policy: sync

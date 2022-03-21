@@ -1,0 +1,14 @@
+listener:
+  tcp:
+    address: 0.0.0.0
+    port: 8080
+    secure: false
+
+logger:
+  pretty: true
+  level: DEBUG
+
+morgan:
+  address: stark
+  port: 8080
+  secure: false

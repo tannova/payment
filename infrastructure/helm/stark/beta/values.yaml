@@ -1,0 +1,34 @@
+replicaCount: 1
+namespace: default
+vaultsecret:
+  enabled: true
+  secretName: stark
+  path: kv/apps/stark
+image:
+  secret: alopay
+  repository: registry.gitlab.com
+  pullPolicy: Always
+  name: mcuc/monorepo/stark
+  tag: stg
+env:
+  - name: STARK_DATABASE_URL
+    valueFrom:
+      secretKeyRef:
+        name: stark
+        key: database_url
+  - name: CRYPTO_DOMAIN
+    value: https://api-stg.inspirelab.io
+  - name: CRYPTO_STORE_ID
+    value: "795237177952942219"
+  - name: CRYPTO_SECRET_KEY
+    valueFrom:
+      secretKeyRef:
+        name: stark
+        key: secret_key
+resources: {}
+service:
+  type: ClusterIP
+  ports:
+    - name: "grpc"
+      port: 8080
+      targetPort: 8080

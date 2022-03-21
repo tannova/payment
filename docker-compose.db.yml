@@ -1,0 +1,123 @@
+version: '3.7'
+
+services:
+  natasha:
+    depends_on:
+      - db-natasha
+    command: [ "./wait-for-it.sh","db-natasha:3306", "--", "./app/server", "-c", "/app/config.yaml" ]
+
+  stark:
+    depends_on:
+      - db-stark
+    command: [ "./wait-for-it.sh","db-stark:3306", "--", "./app/server", "-c", "/app/config.yaml" ]
+
+  coulson:
+    depends_on:
+      - db-coulson
+    command: [ "./wait-for-it.sh","db-coulson:3306", "--", "./app/server", "-c", "/app/config.yaml" ]
+
+  # Database container
+  db-natasha:
+    image: mysql:5.7
+    container_name: 'db-natasha'
+    environment:
+      MYSQL_ROOT_PASSWORD: 'SnwvzD!FKF&TXz59'
+      MYSQL_DATABASE: 'natasha'
+    ports:
+      - '3306:3306'
+    volumes:
+      - "./tmp/db/natasha:/var/lib/mysql"
+    logging:
+      options:
+        max-file: "2"
+        max-size: 10m
+
+  db-shield:
+    image: mysql:5.7
+    container_name: 'db-shield'
+    environment:
+      MYSQL_ROOT_PASSWORD: 'SnwvzD!FKF&TXz59'
+      MYSQL_DATABASE: 'shield'
+    ports:
+      - '4306:3306'
+    volumes:
+      - "./tmp/db/shield:/var/lib/mysql"
+    logging:
+      options:
+        max-file: "2"
+        max-size: 10m
+
+  db-stark:
+    image: mysql:5.7
+    container_name: 'db-stark'
+    environment:
+      MYSQL_ROOT_PASSWORD: 'SnwvzD!FKF&TXz59'
+      MYSQL_DATABASE: 'stark'
+    ports:
+      - '5306:3306'
+    volumes:
+      - "./tmp/db/stark:/var/lib/mysql"
+    logging:
+      options:
+        max-file: "2"
+        max-size: 10m
+
+  db-groot:
+    image: mysql:5.7
+    container_name: 'db-groot'
+    environment:
+      MYSQL_ROOT_PASSWORD: 'SnwvzD!FKF&TXz59'
+      MYSQL_DATABASE: 'groot'
+    ports:
+      - '6306:3306'
+    volumes:
+      - "./tmp/db/groot:/var/lib/mysql"
+    logging:
+      options:
+        max-file: "2"
+        max-size: 10m
+
+  db-odin:
+    image: mysql:5.7
+    container_name: 'db-odin'
+    environment:
+      MYSQL_ROOT_PASSWORD: 'SnwvzD!FKF&TXz59'
+      MYSQL_DATABASE: 'odin'
+    ports:
+      - '7306:3306'
+    volumes:
+      - "./tmp/db/odin:/var/lib/mysql"
+    logging:
+      options:
+        max-file: "2"
+        max-size: 10m
+
+  db-coulson:
+    image: mysql:5.7
+    container_name: 'db-coulson'
+    environment:
+      MYSQL_ROOT_PASSWORD: 'SnwvzD!FKF&TXz59'
+      MYSQL_DATABASE: 'coulson'
+    ports:
+      - '8306:3306'
+    volumes:
+      - "./tmp/db/coulson:/var/lib/mysql"
+    logging:
+      options:
+        max-file: "2"
+        max-size: 10m
+
+  db-nickfury:
+    image: mysql:5.7
+    container_name: 'db-nickfury'
+    environment:
+      MYSQL_ROOT_PASSWORD: 'SnwvzD!FKF&TXz59'
+      MYSQL_DATABASE: 'nickfury'
+    ports:
+      - '9306:3306'
+    volumes:
+      - "./tmp/db/nickfury:/var/lib/mysql"
+    logging:
+      options:
+        max-file: "2"
+        max-size: 10m

@@ -1,0 +1,14 @@
+syntax = "proto3";
+
+package mcuc.bishop.config;
+
+option go_package = "gitlab.com/mcuc/monorepo/backend/bishop/pkg/config;bishop";
+
+import "night-kit/api/carbon.proto";
+import "validate/validate.proto";
+
+message Config {
+  carbon.Listener listener = 1 [ (validate.rules).message = {required : true} ];
+  carbon.Logger logger = 2 [ (validate.rules).message = {required : true} ];
+  carbon.TCPSocket morgan = 3;
+}

@@ -1,0 +1,68 @@
+syntax = "proto3";
+
+package mcuc.stark.vision;
+
+option go_package = "gitlab.com/mcuc/monorepo/backend/stark/pkg/api;stark";
+
+import "google/protobuf/timestamp.proto";
+import "validate/validate.proto";
+import "groot/api/groot.proto";
+import "stark/api/stark.proto";
+import "stark/api/pepper.proto";
+import "stark/api/tony.proto";
+import "stark/api/ultron.proto";
+
+service Vision {
+  rpc GetPaymentDetail (GetPaymentDetailRequest) returns (GetPaymentDetailReply);
+  rpc ListPayments (ListPaymentsRequest) returns (ListPaymentsReply);
+  rpc GetPaymentInfoByPaymentCode (GetPaymentInfoByPaymentCodeRequest) returns (GetPaymentInfoByPaymentCodeReply);
+}
+
+message GetPaymentDetailRequest {
+  int64 id = 1 [(validate.rules).int64.gt = 0];
+}
+
+message GetPaymentDetailReply {
+  mcuc.stark.Payment payment = 1;
+  mcuc.stark.PaymentDetail payment_detail = 2;
+  repeated mcuc.stark.Revision revisions = 3;
+}
+
+message ListPaymentsRequest {
+  uint32 page = 1;
+  uint32 size = 2;
+  google.protobuf.Timestamp from = 3;
+  google.protobuf.Timestamp to = 4;
+  repeated int64 payment_ids = 5;
+  repeated mcuc.stark.PaymentType payment_types = 6;
+  repeated mcuc.stark.MethodType methods = 7;
+  repeated mcuc.stark.Status statuses = 8;
+  repeated int64 merchant_ids = 9;
+  
+  repeated mcuc.stark.pepper.BankName bank_names = 10;
+  repeated mcuc.stark.tony.EWalletName e_wallet_names = 11;
+  repeated mcuc.groot.TelcoName telco_names = 12;
+  repeated mcuc.stark.ultron.CryptoWalletName crypto_wallet_name = 13;
+
+  bool order_asc_created_at = 14;
+  bool order_asc_updated_at = 15;
+}
+
+message ListPaymentsReply {
+  repeated mcuc.stark.PaymentWithDetail records = 1;
+  uint64 total = 2;
+  uint32 current_page = 3;
+}
+
+message GetPaymentInfoByPaymentCodeRequest {
+  string code = 1;
+}
+message GetPaymentInfoByPaymentCodeReply {
+  int64 merchant_id = 1;
+  int64 merchant_user_id = 2;
+  mcuc.stark.MethodType payment_method = 3;
+  oneof payload {
+    mcuc.stark.pepper.BankName bank_name = 4;
+    mcuc.stark.tony.EWalletName e_wallet_name = 5;
+  }
+}

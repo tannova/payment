@@ -1,0 +1,44 @@
+project:
+  name: stark
+
+gen:
+  profiling:
+    port: 6060
+    enable: false
+  dockerfile:
+    enable: false
+  ent:
+    enable: false
+  client:
+    enable: true
+  helm:
+    enable: false
+  proto:
+    go:
+      - code_stark.proto
+      - config_stark.proto
+      - howard.proto
+      - morgan.proto
+      - pepper.proto
+      - stark.proto
+      - tony.proto
+      - ultron.proto
+      - vision.proto
+    js:
+      - code_stark.proto
+      - howard.proto
+      - morgan.proto
+      - pepper.proto
+      - stark.proto
+      - tony.proto
+      - ultron.proto
+      - vision.proto
+    py:
+      - code_stark.proto
+      - howard.proto
+      - morgan.proto
+      - pepper.proto
+      - stark.proto
+      - tony.proto
+      - ultron.proto
+      - vision.proto

@@ -1,0 +1,21 @@
+listener:
+  tcp:
+    address: 0.0.0.0
+    port: 8080
+    secure: false
+
+logger:
+  pretty: false
+  level: DEBUG
+
+sendgrid:
+  api_key: ${HAWKEYE_SENDGRID_API_KEY}
+  endpoint: /v3/mail/send
+  host: https://api.sendgrid.com
+  from_address: ${HAWKEYE_EMAIL_FROM_ADDRESS}
+  from_name: ${HAWKEYE_EMAIL_FROM_NAME}
+
+twilio:
+  account_sid: ${HAWKEYE_TWILIO_ACCOUNT_SID}
+  auth_token: ${HAWKEYE_TWILIO_AUTH_TOKEN}
+  from_phone: '${HAWKEYE_TWILIO_FROM_PHONE}'

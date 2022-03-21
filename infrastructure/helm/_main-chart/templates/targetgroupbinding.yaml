@@ -1,0 +1,23 @@
+{{ $tgb := .Values.targetGroupBinding | default dict}}
+{{- if $tgb.enabled }}
+apiVersion: elbv2.k8s.aws/v1beta1
+kind: TargetGroupBinding
+metadata:
+  name: {{ include "main-chart.fullname" . }}-tgb
+spec:
+  serviceRef:
+    name: {{ include "main-chart.fullname" . }} # route traffic to the awesome-service
+    port: {{ $tgb.targetPort }}
+  targetGroupARN: {{ $tgb.targetGroupArn }}
+  {{- if $tgb.networking }}
+  networking:
+  {{- toYaml $tgb.networking | nindent 4 -}}
+  {{- end }}
+  # networking:
+  #   ingress:
+  #   - from:
+  #     - ipBlock: 
+  #         cidr: "0.0.0.0/0"
+  #       securityGroup:
+  #         groupID: sg-085f7615a3dd74ec8
+{{- end }}

@@ -1,0 +1,25 @@
+replicaCount: 1
+namespace: default
+vaultsecret:
+  enabled: true
+  secretName: bishop
+  path: kv/apps/bishop
+image:
+  secret: alopay
+  repository: registry.gitlab.com
+  pullPolicy: Always
+  name: mcuc/monorepo/bishop
+  tag: latest
+resources: 
+  limits:
+    cpu: 50m
+    memory: 50Mi
+  requests:
+    cpu: 50m
+    memory: 50Mi
+service:
+  type: ClusterIP
+  ports:
+    - name: "grpc"
+      port: 8080
+      targetPort: 8080

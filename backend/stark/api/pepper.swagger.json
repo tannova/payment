@@ -1,0 +1,278 @@
+{
+  "swagger": "2.0",
+  "info": {
+    "title": "stark/api/pepper.proto",
+    "version": "version not set"
+  },
+  "tags": [
+    {
+      "name": "Pepper"
+    }
+  ],
+  "consumes": [
+    "application/json"
+  ],
+  "produces": [
+    "application/json"
+  ],
+  "paths": {},
+  "definitions": {
+    "googlerpcStatus": {
+      "type": "object",
+      "properties": {
+        "code": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "message": {
+          "type": "string"
+        },
+        "details": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/protobufAny"
+          }
+        }
+      }
+    },
+    "pepperApproveBankingTopUpReply": {
+      "type": "object"
+    },
+    "pepperApproveBankingWithdrawReply": {
+      "type": "object"
+    },
+    "pepperBankName": {
+      "type": "string",
+      "enum": [
+        "BANK_UNSPECIFIED",
+        "VIETCOMBANK",
+        "SACOMBANK",
+        "ACB",
+        "VIETINBANK",
+        "BIDV"
+      ],
+      "default": "BANK_UNSPECIFIED"
+    },
+    "pepperBankStatus": {
+      "type": "string",
+      "enum": [
+        "BANK_STATUS_UNSPECIFIED",
+        "BANK_STATUS_ACTIVE",
+        "BANK_STATUS_IN_ACTIVE"
+      ],
+      "default": "BANK_STATUS_UNSPECIFIED"
+    },
+    "pepperCancelBankingWithdrawReply": {
+      "type": "object"
+    },
+    "pepperCreateBankingTopUpReply": {
+      "type": "object"
+    },
+    "pepperCreateBankingWithdrawReply": {
+      "type": "object",
+      "properties": {
+        "paymentId": {
+          "type": "string",
+          "format": "int64"
+        }
+      }
+    },
+    "pepperCreateSystemBankAccountReply": {
+      "type": "object"
+    },
+    "pepperCreateSystemBankAccountRequest": {
+      "type": "object",
+      "properties": {
+        "accountId": {
+          "type": "string",
+          "format": "int64"
+        },
+        "bankName": {
+          "type": "string"
+        },
+        "merchantId": {
+          "type": "string",
+          "format": "int64"
+        },
+        "accountNumber": {
+          "type": "string"
+        },
+        "accountName": {
+          "type": "string"
+        },
+        "branch": {
+          "type": "string"
+        },
+        "balance": {
+          "type": "string",
+          "format": "uint64"
+        },
+        "dailyBalanceLimit": {
+          "type": "string",
+          "format": "uint64"
+        },
+        "errorCode": {
+          "type": "string"
+        }
+      }
+    },
+    "pepperGetBankPaymentCodeReply": {
+      "type": "object",
+      "properties": {
+        "code": {
+          "type": "string"
+        },
+        "accountNumber": {
+          "type": "string"
+        },
+        "accountName": {
+          "type": "string"
+        },
+        "branch": {
+          "type": "string"
+        }
+      }
+    },
+    "pepperGetIsMerchantUserBankAccountVerifiedReply": {
+      "type": "object",
+      "properties": {
+        "verified": {
+          "type": "boolean"
+        }
+      }
+    },
+    "pepperImportSystemBankAccountReply": {
+      "type": "object"
+    },
+    "pepperListSystemBankAccountByPaymentInfoReply": {
+      "type": "object",
+      "properties": {
+        "records": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/pepperSystemBank"
+          }
+        }
+      }
+    },
+    "pepperListSystemBankAccountsReply": {
+      "type": "object",
+      "properties": {
+        "total": {
+          "type": "string",
+          "format": "int64"
+        },
+        "currentPage": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "records": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/pepperSystemBank"
+          }
+        }
+      }
+    },
+    "pepperRejectBankingTopUpReply": {
+      "type": "object"
+    },
+    "pepperRejectBankingWithdrawReply": {
+      "type": "object"
+    },
+    "pepperSubmitBankingWithdrawReply": {
+      "type": "object"
+    },
+    "pepperSystemBank": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "format": "int64"
+        },
+        "bankName": {
+          "$ref": "#/definitions/pepperBankName"
+        },
+        "status": {
+          "$ref": "#/definitions/pepperBankStatus"
+        },
+        "merchantId": {
+          "type": "string",
+          "format": "int64"
+        },
+        "accountNumber": {
+          "type": "string"
+        },
+        "accountName": {
+          "type": "string"
+        },
+        "branch": {
+          "type": "string"
+        },
+        "balance": {
+          "type": "string",
+          "format": "uint64"
+        },
+        "dailyBalanceLimit": {
+          "type": "string",
+          "format": "uint64"
+        },
+        "dailyUsedAmount": {
+          "type": "string",
+          "format": "int64"
+        },
+        "dailyBalance": {
+          "type": "string",
+          "format": "uint64"
+        }
+      }
+    },
+    "pepperUpdateSystemBankAccountStatusReply": {
+      "type": "object"
+    },
+    "pepperValidateImportSystemBankAccountReply": {
+      "type": "object",
+      "properties": {
+        "duplicatedRecords": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/pepperCreateSystemBankAccountRequest"
+          }
+        },
+        "validRecords": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/pepperCreateSystemBankAccountRequest"
+          }
+        },
+        "duplicatedAccountIdRecords": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/pepperCreateSystemBankAccountRequest"
+          }
+        },
+        "invalidRecords": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/pepperCreateSystemBankAccountRequest"
+          }
+        }
+      }
+    },
+    "pepperVerifyMerchantUserBankAccountReply": {
+      "type": "object"
+    },
+    "protobufAny": {
+      "type": "object",
+      "properties": {
+        "typeUrl": {
+          "type": "string"
+        },
+        "value": {
+          "type": "string",
+          "format": "byte"
+        }
+      }
+    }
+  }
+}

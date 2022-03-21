@@ -1,0 +1,463 @@
+{
+  "swagger": "2.0",
+  "info": {
+    "title": "stark/api/vision.proto",
+    "version": "version not set"
+  },
+  "tags": [
+    {
+      "name": "Vision"
+    }
+  ],
+  "consumes": [
+    "application/json"
+  ],
+  "produces": [
+    "application/json"
+  ],
+  "paths": {},
+  "definitions": {
+    "googlerpcStatus": {
+      "type": "object",
+      "properties": {
+        "code": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "message": {
+          "type": "string"
+        },
+        "details": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/protobufAny"
+          }
+        }
+      }
+    },
+    "grootTelcoName": {
+      "type": "string",
+      "enum": [
+        "BRANCH_UNSPECIFIED",
+        "VIETTEL",
+        "MOBIPHONE",
+        "VINAPHONE",
+        "VIETNAMMOBILE"
+      ],
+      "default": "BRANCH_UNSPECIFIED"
+    },
+    "mcucstarkStatus": {
+      "type": "string",
+      "enum": [
+        "STATUS_UNSPECIFIED",
+        "CREATED",
+        "CANCELED",
+        "REJECTING",
+        "REJECTED",
+        "REJECT_FAILED",
+        "APPROVED",
+        "APPROVE_FAILED",
+        "SUBMITTED",
+        "SUBMIT_FAILED",
+        "COMPLETED",
+        "SUBMITTING"
+      ],
+      "default": "STATUS_UNSPECIFIED",
+      "title": "- SUBMITTING: for calling to UMO and prevent teller submit manual"
+    },
+    "morganTelcoPaymentDetail": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "format": "int64"
+        },
+        "serialNumber": {
+          "type": "string"
+        },
+        "cardId": {
+          "type": "string"
+        },
+        "chargedAmount": {
+          "type": "string",
+          "format": "uint64"
+        },
+        "amount": {
+          "type": "string",
+          "format": "uint64"
+        },
+        "telcoName": {
+          "$ref": "#/definitions/grootTelcoName"
+        },
+        "createdAt": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "updatedAt": {
+          "type": "string",
+          "format": "date-time"
+        }
+      }
+    },
+    "pepperBankName": {
+      "type": "string",
+      "enum": [
+        "BANK_UNSPECIFIED",
+        "VIETCOMBANK",
+        "SACOMBANK",
+        "ACB",
+        "VIETINBANK",
+        "BIDV"
+      ],
+      "default": "BANK_UNSPECIFIED"
+    },
+    "pepperBankingPaymentDetail": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "format": "int64"
+        },
+        "merchantUserBankName": {
+          "$ref": "#/definitions/pepperBankName"
+        },
+        "merchantUserAccountNumber": {
+          "type": "string"
+        },
+        "merchantUserAccountName": {
+          "type": "string"
+        },
+        "systemBankName": {
+          "$ref": "#/definitions/pepperBankName"
+        },
+        "systemAccountNumber": {
+          "type": "string"
+        },
+        "systemAccountName": {
+          "type": "string"
+        },
+        "amount": {
+          "type": "string",
+          "format": "uint64"
+        },
+        "imageUrl": {
+          "type": "string"
+        },
+        "txId": {
+          "type": "string"
+        },
+        "paymentCode": {
+          "type": "string"
+        },
+        "fee": {
+          "type": "string",
+          "format": "uint64"
+        },
+        "merchantUserId": {
+          "type": "string",
+          "format": "int64"
+        },
+        "createdAt": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "updatedAt": {
+          "type": "string",
+          "format": "date-time"
+        }
+      }
+    },
+    "protobufAny": {
+      "type": "object",
+      "properties": {
+        "typeUrl": {
+          "type": "string"
+        },
+        "value": {
+          "type": "string",
+          "format": "byte"
+        }
+      }
+    },
+    "starkMethodType": {
+      "type": "string",
+      "enum": [
+        "METHOD_UNSPECIFIED",
+        "T",
+        "I",
+        "P",
+        "E",
+        "C"
+      ],
+      "default": "METHOD_UNSPECIFIED"
+    },
+    "starkPayment": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "format": "int64"
+        },
+        "createdAt": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "updatedAt": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "createdBy": {
+          "type": "string"
+        },
+        "updatedBy": {
+          "type": "string"
+        },
+        "approvedBy": {
+          "type": "string"
+        },
+        "merchantId": {
+          "type": "string",
+          "format": "int64"
+        },
+        "method": {
+          "$ref": "#/definitions/starkMethodType"
+        },
+        "type": {
+          "$ref": "#/definitions/starkPaymentType"
+        },
+        "status": {
+          "$ref": "#/definitions/mcucstarkStatus"
+        }
+      }
+    },
+    "starkPaymentDetail": {
+      "type": "object",
+      "properties": {
+        "banking": {
+          "$ref": "#/definitions/pepperBankingPaymentDetail"
+        },
+        "eWallet": {
+          "$ref": "#/definitions/tonyEWalletPaymentDetail"
+        },
+        "telco": {
+          "$ref": "#/definitions/morganTelcoPaymentDetail"
+        },
+        "crypto": {
+          "$ref": "#/definitions/ultronCryptoPaymentDetail"
+        }
+      }
+    },
+    "starkPaymentType": {
+      "type": "string",
+      "enum": [
+        "PAYMENT_UNSPECIFIED",
+        "TOPUP",
+        "WITHDRAW"
+      ],
+      "default": "PAYMENT_UNSPECIFIED"
+    },
+    "starkPaymentWithDetail": {
+      "type": "object",
+      "properties": {
+        "payment": {
+          "$ref": "#/definitions/starkPayment"
+        },
+        "paymentDetail": {
+          "$ref": "#/definitions/starkPaymentDetail"
+        }
+      }
+    },
+    "starkRevision": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "format": "int64"
+        },
+        "createdAt": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "createdBy": {
+          "type": "string"
+        },
+        "paymentId": {
+          "type": "string",
+          "format": "int64"
+        },
+        "status": {
+          "$ref": "#/definitions/mcucstarkStatus"
+        },
+        "note": {
+          "type": "string"
+        }
+      }
+    },
+    "tonyEWalletName": {
+      "type": "string",
+      "enum": [
+        "EWALLET_NAME_UNSPECIFIED",
+        "MOMO",
+        "ZALOPAY"
+      ],
+      "default": "EWALLET_NAME_UNSPECIFIED"
+    },
+    "tonyEWalletPaymentDetail": {
+      "type": "object",
+      "properties": {
+        "paymentCode": {
+          "type": "string"
+        },
+        "eWalletName": {
+          "$ref": "#/definitions/tonyEWalletName"
+        },
+        "merchantUserAccountPhoneNumber": {
+          "type": "string"
+        },
+        "merchantUserAccountName": {
+          "type": "string"
+        },
+        "systemAccountPhoneNumber": {
+          "type": "string"
+        },
+        "systemAccountName": {
+          "type": "string"
+        },
+        "amount": {
+          "type": "string",
+          "format": "uint64"
+        },
+        "fee": {
+          "type": "string",
+          "format": "uint64"
+        },
+        "merchantUserId": {
+          "type": "string",
+          "format": "int64"
+        }
+      }
+    },
+    "ultronCryptoNetworkType": {
+      "type": "string",
+      "enum": [
+        "CRYPTO_NETWORK_TYPE_UNSPECIFIED",
+        "ERC20",
+        "BEP20",
+        "TRC20"
+      ],
+      "default": "CRYPTO_NETWORK_TYPE_UNSPECIFIED"
+    },
+    "ultronCryptoPaymentDetail": {
+      "type": "object",
+      "properties": {
+        "cryptoType": {
+          "$ref": "#/definitions/ultronCryptoType"
+        },
+        "cryptoNetworkType": {
+          "$ref": "#/definitions/ultronCryptoNetworkType"
+        },
+        "cryptoWalletName": {
+          "$ref": "#/definitions/ultronCryptoWalletName"
+        },
+        "receiverAddress": {
+          "type": "string"
+        },
+        "senderAddress": {
+          "type": "string"
+        },
+        "amount": {
+          "type": "number",
+          "format": "double"
+        },
+        "receivedAmount": {
+          "type": "number",
+          "format": "double"
+        },
+        "txHash": {
+          "type": "string"
+        },
+        "fee": {
+          "type": "number",
+          "format": "double"
+        },
+        "imageUrl": {
+          "type": "string"
+        }
+      }
+    },
+    "ultronCryptoType": {
+      "type": "string",
+      "enum": [
+        "CRYPTO_TYPE_UNSPECIFIED",
+        "USDT"
+      ],
+      "default": "CRYPTO_TYPE_UNSPECIFIED"
+    },
+    "ultronCryptoWalletName": {
+      "type": "string",
+      "enum": [
+        "CRYPTO_WALLET_NAME_UNSPECIFIED",
+        "UMO"
+      ],
+      "default": "CRYPTO_WALLET_NAME_UNSPECIFIED"
+    },
+    "visionGetPaymentDetailReply": {
+      "type": "object",
+      "properties": {
+        "payment": {
+          "$ref": "#/definitions/starkPayment"
+        },
+        "paymentDetail": {
+          "$ref": "#/definitions/starkPaymentDetail"
+        },
+        "revisions": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/starkRevision"
+          }
+        }
+      }
+    },
+    "visionGetPaymentInfoByPaymentCodeReply": {
+      "type": "object",
+      "properties": {
+        "merchantId": {
+          "type": "string",
+          "format": "int64"
+        },
+        "merchantUserId": {
+          "type": "string",
+          "format": "int64"
+        },
+        "paymentMethod": {
+          "$ref": "#/definitions/starkMethodType"
+        },
+        "bankName": {
+          "$ref": "#/definitions/pepperBankName"
+        },
+        "eWalletName": {
+          "$ref": "#/definitions/tonyEWalletName"
+        }
+      }
+    },
+    "visionListPaymentsReply": {
+      "type": "object",
+      "properties": {
+        "records": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/starkPaymentWithDetail"
+          }
+        },
+        "total": {
+          "type": "string",
+          "format": "uint64"
+        },
+        "currentPage": {
+          "type": "integer",
+          "format": "int64"
+        }
+      }
+    }
+  }
+}

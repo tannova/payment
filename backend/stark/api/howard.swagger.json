@@ -1,0 +1,468 @@
+{
+  "swagger": "2.0",
+  "info": {
+    "title": "stark/api/howard.proto",
+    "version": "version not set"
+  },
+  "tags": [
+    {
+      "name": "Howard"
+    }
+  ],
+  "consumes": [
+    "application/json"
+  ],
+  "produces": [
+    "application/json"
+  ],
+  "paths": {},
+  "definitions": {
+    "googlerpcStatus": {
+      "type": "object",
+      "properties": {
+        "code": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "message": {
+          "type": "string"
+        },
+        "details": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/protobufAny"
+          }
+        }
+      }
+    },
+    "howardAllocationDetail": {
+      "type": "object",
+      "properties": {
+        "method": {
+          "$ref": "#/definitions/starkMethodType"
+        },
+        "amount": {
+          "type": "number",
+          "format": "double"
+        },
+        "percent": {
+          "type": "number",
+          "format": "double"
+        }
+      }
+    },
+    "howardGetAllocationTopUpRateReply": {
+      "type": "object",
+      "properties": {
+        "totalTopup": {
+          "type": "number",
+          "format": "double"
+        },
+        "topUpAllocationRate": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/howardAllocationDetail"
+          }
+        }
+      }
+    },
+    "howardGetAllocationWithdrawRateReply": {
+      "type": "object",
+      "properties": {
+        "totalWithdraw": {
+          "type": "number",
+          "format": "double"
+        },
+        "withdrawAllocationRate": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/howardAllocationDetail"
+          }
+        }
+      }
+    },
+    "howardGetIncomeStatementReply": {
+      "type": "object",
+      "properties": {
+        "revenues": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/howardIncome"
+          }
+        },
+        "profits": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/howardIncome"
+          }
+        }
+      }
+    },
+    "howardGetPaymentTodayReply": {
+      "type": "object",
+      "properties": {
+        "topUpCompletion": {
+          "$ref": "#/definitions/howardTopUpCompletion"
+        },
+        "withdrawCompletion": {
+          "$ref": "#/definitions/howardWithdrawCompletion"
+        }
+      }
+    },
+    "howardGetProcessingPerformanceReply": {
+      "type": "object",
+      "properties": {
+        "merchantId": {
+          "type": "string",
+          "format": "int64"
+        },
+        "totalOrder": {
+          "type": "string",
+          "format": "uint64"
+        },
+        "successfully": {
+          "$ref": "#/definitions/howardStatisticDetail"
+        },
+        "failed": {
+          "$ref": "#/definitions/howardStatisticDetail"
+        },
+        "waiting": {
+          "$ref": "#/definitions/howardStatisticDetail"
+        }
+      }
+    },
+    "howardGetProfitRateReply": {
+      "type": "object",
+      "properties": {
+        "totalRevenue": {
+          "type": "number",
+          "format": "double"
+        },
+        "totalProfit": {
+          "type": "number",
+          "format": "double"
+        },
+        "profitRate": {
+          "type": "number",
+          "format": "double"
+        }
+      }
+    },
+    "howardGetSellReportByMerchantReply": {
+      "type": "object",
+      "properties": {
+        "topUps": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/howardSaleReportItem"
+          }
+        },
+        "withdraws": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/howardSaleReportItem"
+          }
+        }
+      }
+    },
+    "howardGetSellReportByPaymentMethodReply": {
+      "type": "object",
+      "properties": {
+        "topUps": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/howardSaleReportItem"
+          }
+        },
+        "withdraws": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/howardSaleReportItem"
+          }
+        }
+      }
+    },
+    "howardGetSellReportByTellerReply": {
+      "type": "object",
+      "properties": {
+        "topUps": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/howardSaleReportItem"
+          }
+        },
+        "withdraws": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/howardSaleReportItem"
+          }
+        }
+      }
+    },
+    "howardGetSellReportByTimeRangeReply": {
+      "type": "object",
+      "properties": {
+        "topUps": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/howardSaleReportItem"
+          }
+        },
+        "withdraws": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/howardSaleReportItem"
+          }
+        }
+      }
+    },
+    "howardGetStatisticReply": {
+      "type": "object",
+      "properties": {
+        "order": {
+          "$ref": "#/definitions/howardStatisticDetail"
+        },
+        "amount": {
+          "$ref": "#/definitions/howardStatisticDetail"
+        },
+        "user": {
+          "$ref": "#/definitions/howardStatisticDetail"
+        },
+        "arppu": {
+          "$ref": "#/definitions/howardStatisticDetail"
+        }
+      }
+    },
+    "howardGetTopPaymentMethodReply": {
+      "type": "object",
+      "properties": {
+        "topPaymentMethodRevenue": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/howardPaymentMethodRevenue"
+          }
+        }
+      }
+    },
+    "howardGetTopTellerReply": {
+      "type": "object",
+      "properties": {
+        "topTellerRevenue": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/howardTellerRevenue"
+          }
+        }
+      }
+    },
+    "howardGetTotalAmountReply": {
+      "type": "object",
+      "properties": {
+        "details": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/howardTotalAmountDetail"
+          }
+        }
+      }
+    },
+    "howardIncome": {
+      "type": "object",
+      "properties": {
+        "date": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "amount": {
+          "type": "number",
+          "format": "double"
+        }
+      }
+    },
+    "howardPaymentMethodRevenue": {
+      "type": "object",
+      "properties": {
+        "method": {
+          "$ref": "#/definitions/starkMethodType"
+        },
+        "type": {
+          "$ref": "#/definitions/starkPaymentType"
+        },
+        "amount": {
+          "type": "number",
+          "format": "double"
+        }
+      }
+    },
+    "howardSaleReportItem": {
+      "type": "object",
+      "properties": {
+        "quantity": {
+          "type": "string",
+          "format": "int64"
+        },
+        "amount": {
+          "type": "number",
+          "format": "double"
+        },
+        "average": {
+          "type": "number",
+          "format": "double"
+        },
+        "discount": {
+          "type": "number",
+          "format": "double"
+        },
+        "revenue": {
+          "type": "number",
+          "format": "double"
+        },
+        "date": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "merchantId": {
+          "type": "string",
+          "format": "int64"
+        },
+        "paymentMethod": {
+          "$ref": "#/definitions/starkMethodType"
+        },
+        "tellerId": {
+          "type": "string"
+        }
+      }
+    },
+    "howardStatisticDetail": {
+      "type": "object",
+      "properties": {
+        "number": {
+          "type": "string",
+          "format": "uint64"
+        },
+        "percent": {
+          "type": "number",
+          "format": "double"
+        }
+      }
+    },
+    "howardStatisticFilterType": {
+      "type": "string",
+      "enum": [
+        "STATISTIC_FILTER_UNSPECIFIED",
+        "STATISTIC_FILTER_DAILY",
+        "STATISTIC_FILTER_WEEKLY",
+        "STATISTIC_FILTER_MONTHLY"
+      ],
+      "default": "STATISTIC_FILTER_UNSPECIFIED"
+    },
+    "howardTellerRevenue": {
+      "type": "object",
+      "properties": {
+        "userId": {
+          "type": "string"
+        },
+        "amount": {
+          "type": "number",
+          "format": "double"
+        }
+      }
+    },
+    "howardTopUpCompletion": {
+      "type": "object",
+      "properties": {
+        "completed": {
+          "type": "string",
+          "format": "int64"
+        },
+        "total": {
+          "type": "string",
+          "format": "int64"
+        }
+      }
+    },
+    "howardTotalAmountDetail": {
+      "type": "object",
+      "properties": {
+        "date": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "merchantAmounts": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/howardTotalAmountMerchant"
+          }
+        }
+      }
+    },
+    "howardTotalAmountMerchant": {
+      "type": "object",
+      "properties": {
+        "merchantId": {
+          "type": "string",
+          "format": "int64"
+        },
+        "amount": {
+          "type": "string",
+          "format": "uint64"
+        }
+      }
+    },
+    "howardWithdrawCompletion": {
+      "type": "object",
+      "properties": {
+        "completed": {
+          "type": "string",
+          "format": "int64"
+        },
+        "total": {
+          "type": "string",
+          "format": "int64"
+        }
+      }
+    },
+    "protobufAny": {
+      "type": "object",
+      "properties": {
+        "typeUrl": {
+          "type": "string"
+        },
+        "value": {
+          "type": "string",
+          "format": "byte"
+        }
+      }
+    },
+    "starkCurrency": {
+      "type": "string",
+      "enum": [
+        "CURRENCY_UNSPECIFIED",
+        "VND",
+        "USDT"
+      ],
+      "default": "CURRENCY_UNSPECIFIED"
+    },
+    "starkMethodType": {
+      "type": "string",
+      "enum": [
+        "METHOD_UNSPECIFIED",
+        "T",
+        "I",
+        "P",
+        "E",
+        "C"
+      ],
+      "default": "METHOD_UNSPECIFIED"
+    },
+    "starkPaymentType": {
+      "type": "string",
+      "enum": [
+        "PAYMENT_UNSPECIFIED",
+        "TOPUP",
+        "WITHDRAW"
+      ],
+      "default": "PAYMENT_UNSPECIFIED"
+    }
+  }
+}

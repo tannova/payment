@@ -1,0 +1,42 @@
+replicaCount: 1
+namespace: default
+vaultsecret:
+  enabled: true
+  secretName: bishop
+  path: kv/apps/bishop
+image:
+  secret: alopay
+  repository: registry.gitlab.com
+  pullPolicy: Always
+  name: mcuc/monorepo/bishop
+  tag: prod
+env:
+  - name: S3_ACCESS_KEY_ID
+    valueFrom:
+      secretKeyRef:
+        name: bishop
+        key: s3_access_key_id
+  - name: S3_SECRET_ACCESS_KEY
+    valueFrom:
+      secretKeyRef:
+        name: bishop
+        key: s3_secret_access_key
+  - name: S3_REGION
+    value: ap-southeast-1
+  - name: HOSE_S3_BUCKET
+    value: bishop-beta
+  - name: HOSE_S3_HOST
+    value: https://alopay-bishop-beta.s3-ap-southeast-1.amazonaws.com
+resources: 
+  limits:
+    cpu: 50m
+    memory: 50Mi
+  requests:
+    cpu: 50m
+    memory: 50Mi
+service:
+  type: ClusterIP
+  ports:
+    - name: "grpc"
+      port: 8080
+      targetPort: 8080

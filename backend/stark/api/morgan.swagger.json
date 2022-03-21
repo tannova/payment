@@ -1,0 +1,170 @@
+{
+  "swagger": "2.0",
+  "info": {
+    "title": "stark/api/morgan.proto",
+    "version": "version not set"
+  },
+  "tags": [
+    {
+      "name": "Morgan"
+    }
+  ],
+  "consumes": [
+    "application/json"
+  ],
+  "produces": [
+    "application/json"
+  ],
+  "paths": {},
+  "definitions": {
+    "googlerpcStatus": {
+      "type": "object",
+      "properties": {
+        "code": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "message": {
+          "type": "string"
+        },
+        "details": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/protobufAny"
+          }
+        }
+      }
+    },
+    "grootCard": {
+      "type": "object",
+      "properties": {
+        "code": {
+          "type": "string"
+        },
+        "serial": {
+          "type": "string"
+        },
+        "telcoName": {
+          "$ref": "#/definitions/grootTelcoName"
+        },
+        "amount": {
+          "type": "string",
+          "format": "uint64"
+        },
+        "price": {
+          "type": "string",
+          "format": "uint64"
+        }
+      }
+    },
+    "grootTelcoName": {
+      "type": "string",
+      "enum": [
+        "BRANCH_UNSPECIFIED",
+        "VIETTEL",
+        "MOBIPHONE",
+        "VINAPHONE",
+        "VIETNAMMOBILE"
+      ],
+      "default": "BRANCH_UNSPECIFIED"
+    },
+    "morganApproveTelcoTopUpReply": {
+      "type": "object"
+    },
+    "morganApproveTelcoWithdrawReply": {
+      "type": "object"
+    },
+    "morganCancelTelcoWithdrawReply": {
+      "type": "object"
+    },
+    "morganCompleteTelcoTopUpReply": {
+      "type": "object"
+    },
+    "morganCreateTelcoTopUpReply": {
+      "type": "object",
+      "properties": {
+        "paymentId": {
+          "type": "string",
+          "format": "int64"
+        }
+      }
+    },
+    "morganCreateTelcoWithdrawReply": {
+      "type": "object",
+      "properties": {
+        "paymentId": {
+          "type": "string",
+          "format": "int64"
+        }
+      }
+    },
+    "morganGetSettingsReply": {
+      "type": "object",
+      "properties": {
+        "topUpAutoApproval": {
+          "type": "boolean"
+        },
+        "enableThirdParty": {
+          "type": "boolean"
+        },
+        "chargeCardProviders": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/starkmorganProvider"
+          }
+        },
+        "getCardProviders": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/starkmorganProvider"
+          }
+        }
+      }
+    },
+    "morganRejectTelcoTopUpReply": {
+      "type": "object"
+    },
+    "morganRejectTelcoWithdrawReply": {
+      "type": "object"
+    },
+    "morganUpdateChargeCardProvidersSettingReply": {
+      "type": "object"
+    },
+    "morganUpdateGetCardProvidersSettingReply": {
+      "type": "object"
+    },
+    "morganUpdateTopUpAutoApprovalSettingReply": {
+      "type": "object"
+    },
+    "morganUpdateUsingThirdPartySettingReply": {
+      "type": "object"
+    },
+    "protobufAny": {
+      "type": "object",
+      "properties": {
+        "typeUrl": {
+          "type": "string"
+        },
+        "value": {
+          "type": "string",
+          "format": "byte"
+        }
+      }
+    },
+    "starkmorganProvider": {
+      "type": "object",
+      "properties": {
+        "name": {
+          "type": "string"
+        },
+        "enable": {
+          "type": "boolean"
+        },
+        "priority": {
+          "type": "string",
+          "format": "int64"
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,65 @@
+replicaCount: 1
+namespace: default
+vaultsecret:
+  enabled: true
+  secretName: hawkeye
+  path: kv/apps/hawkeye
+image:
+  secret: alopay
+  repository: registry.gitlab.com
+  pullPolicy: Always
+  name: mcuc/monorepo/hawkeye
+  tag: prod
+resources: 
+  limits:
+    cpu: 50m
+    memory: 50Mi
+  requests:
+    cpu: 50m
+    memory: 50Mi
+env:
+  - name: HAWKEYE_SENDGRID_API_KEY
+    valueFrom:
+      secretKeyRef:
+        name: hawkeye
+        key: sendgrid_api_key
+  - name: HAWKEYE_EMAIL_FROM_ADDRESS
+    valueFrom:
+      secretKeyRef:
+        name: hawkeye
+        key: email_from_address
+  - name: HAWKEYE_EMAIL_FROM_NAME
+    valueFrom:
+      secretKeyRef:
+        name: hawkeye
+        key: email_from_name
+  - name: HAWKEYE_TWILIO_ACCOUNT_SID
+    valueFrom:
+      secretKeyRef:
+        name: hawkeye
+        key: twilio_account_sid
+  - name: HAWKEYE_TWILIO_AUTH_TOKEN
+    valueFrom:
+      secretKeyRef:
+        name: hawkeye
+        key: twilio_auth_token
+  - name: HAWKEYE_TWILIO_FROM_PHONE
+    valueFrom:
+      secretKeyRef:
+        name: hawkeye
+        key: twilio_from_phone
+service:
+  type: ClusterIP
+  ports:
+    - name: "grpc"
+      port: 8080
+      targetPort: 8080
+affinity:
+  nodeAffinity:
+    requiredDuringSchedulingIgnoredDuringExecution:
+      nodeSelectorTerms:
+        - matchExpressions:
+            - key: node.kubernetes.io/app
+              operator: In
+              values:
+                - general

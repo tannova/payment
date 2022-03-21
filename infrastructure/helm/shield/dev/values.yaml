@@ -1,0 +1,48 @@
+replicaCount: 1
+namespace: default
+vaultsecret:
+  enabled: true
+  secretName: shield
+  path: kv/apps/shield
+image:
+  secret: alopay
+  repository: registry.gitlab.com
+  pullPolicy: Always
+  name: mcuc/monorepo/shield
+  tag: dev
+env:
+  - name: SHIELD_DATABASE_URL
+    valueFrom:
+      secretKeyRef:
+        name: shield
+        key: database_url
+  - name: SHIELD_REDIS_ADDRESS
+    valueFrom:
+      secretKeyRef:
+        name: shield
+        key: redis_address
+  - name: SHIELD_LINK_FORMAT_CREATE_PASSWORD
+    value: https://loki.dev.alopay.inspirelab.io/new-password?otpId={{.ID}}&otp={{.OTP}}
+  - name: SHIELD_LINK_FORMAT_SIGN_IN_CONFIRMATION
+    value: https://loki.dev.alopay.inspirelab.io/verify?otpId={{.ID}}&otp={{.OTP}}
+  - name: SHIELD_LINK_FORMAT_VERIFY_EMAIL
+    value: https://loki.dev.alopay.inspirelab.io/verify-email?token={{.Token}}
+  - name: SHIELD_LINK_FORMAT_RESET_PASSWORD
+    value: https://loki.dev.alopay.inspirelab.io/reset-password?otpId={{.ID}}&otp={{.OTP}}
+
+resources: 
+  limits:
+    cpu: 50m
+    memory: 50Mi
+  requests:
+    cpu: 50m
+    memory: 50Mi
+service:
+  type: ClusterIP
+  ports:
+    - name: "grpc"
+      port: 8080
+      targetPort: 8080
+    - name: "http"
+      port: 8081
+      targetPort: 8081

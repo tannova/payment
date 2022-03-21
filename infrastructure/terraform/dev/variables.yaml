@@ -1,0 +1,32 @@
+profile: alopay
+region: ap-southeast-1
+environment: dev
+vpc_cidr: 172.16.0.0/16
+cluster_name: alopay-eks-dev
+internal_access: false
+ssh_key_name: alopay-eks-dev
+instance_type: t2.medium
+route53_hosted_zone: alopay.inspirelab.io
+bifrost_domain: bifrost.dev.alopay.inspirelab.io
+sanbay_domain: sanbay.dev.alopay.inspirelab.io
+bentau_proxy_domain: bentau.dev.alopay.inspirelab.io
+kibana_domain: kibana.dev.alopay.inspirelab.io
+vault_domain: vault.dev.alopay.inspirelab.io
+cloudfront_cache_policy_id: edf0bf4e-601d-4119-9c4d-9d9ccac624ac
+heimdall_domain: heimdall.dev.alopay.inspirelab.io
+
+# Hose
+hose_domain: hose.dev.alopay.inspirelab.io
+hose_bucket: alopay-hose-dev
+
+# Loki
+loki_bucket: alopay-frontend-loki-dev
+loki_domain: loki.dev.alopay.inspirelab.io
+loki_username: loki
+loki_password: dev@alopay
+
+# cmgp
+cmgp_bucket: alopay-frontend-cmgp-dev
+cmgp_domain: cmgp.dev.alopay.inspirelab.io
+cmgp_username: cmgp
+cmgp_password: dev@alopay

@@ -1,0 +1,48 @@
+listener:
+  tcp:
+    address: 0.0.0.0
+    port: 8080
+    secure: false
+
+logger:
+  pretty: true
+  level: DEBUG
+
+database:
+  url: ${STARK_DATABASE_URL}
+  debug: false
+
+natasha:
+  address: natasha
+  port: 8080
+  secure: false
+
+blackwidow:
+  address: natasha
+  port: 8080
+  secure: false
+
+groot:
+  address: groot
+  port: 8080
+  secure: false
+
+default_setting:
+  payment:
+    method: 1
+    provider: 1
+    merchant_id: 2
+    user_payment_id: 8
+  crypto:
+    domain: ${CRYPTO_DOMAIN}
+    store_id: ${CRYPTO_STORE_ID} 
+    secret_key: ${CRYPTO_SECRET_KEY}
+  map_bank_name:
+    V: "VIETCOMBANK"
+    S: "SACOMBANK"
+    A: "ACB"
+    N: "VIETINBANK"
+    B: "BIDV"
+  map_e_wallet_name:
+    M: "MOMO"
+    Z: "ZALOPAY"
